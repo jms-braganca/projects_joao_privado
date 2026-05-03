@@ -1,0 +1,293 @@
+/* ============================================================
+   landing.css — Estilos da landing (topbar + hero + cards)
+   Importado depois de theme.css
+   USADO APENAS na index.html
+   ============================================================ */
+
+body {
+  background: var(--bg);
+  margin: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: var(--text);
+}
+
+/* ── TOPBAR ────────────────────────────────────────────────── */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--divider);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.tb-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+.tb-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--itau-orange);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.tb-brand-text {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 600;
+  line-height: 1.15;
+}
+.tb-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.tb-link {
+  padding: 7px 14px;
+  font-size: 12.5px;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tb-link:hover {
+  background: var(--surface3);
+  color: var(--text);
+}
+.tb-link.active {
+  background: var(--navy-lt);
+  color: var(--navy);
+}
+.tb-link svg {
+  width: 13px;
+  height: 13px;
+}
+.tb-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--divider);
+  margin: 0 8px;
+}
+.tb-link.tb-link-sobre {
+  color: var(--text);
+}
+
+/* Hamburger só aparece em mobile */
+.tb-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--text);
+  border-radius: 5px;
+}
+.tb-hamburger:hover { background: var(--surface3); }
+.tb-hamburger svg { width: 22px; height: 22px; }
+
+/* ── HERO ──────────────────────────────────────────────────── */
+.hero {
+  padding: 70px 28px 50px;
+  text-align: center;
+}
+.hero .eyebrow {
+  font-size: 11px;
+  color: var(--muted2);
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+.hero h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 44px;
+  line-height: 1.05;
+  margin: 0 0 14px;
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: -0.8px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.hero .hero-sub {
+  font-size: 14.5px;
+  color: var(--muted);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+
+/* ── CARDS GRID ───────────────────────────────────────────── */
+.cards-section {
+  padding: 0 28px 60px;
+}
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.nav-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 22px 22px 18px;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: transform .2s ease, box-shadow .2s ease;
+  min-height: 160px;
+}
+.nav-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+.nav-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.nav-card-icon svg { width: 18px; height: 18px; }
+.nav-card-icon.area-fundos { background: var(--navy-lt); color: var(--navy); }
+.nav-card-icon.area-prev   { background: var(--pos-bg);  color: var(--pos);  }
+.nav-card-icon.area-corr   { background: var(--warn-bg); color: var(--warn); }
+.nav-card-icon.area-calc   { background: var(--info-bg); color: var(--info); }
+
+.nav-card h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  margin: 0 0 6px;
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.nav-card p {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0 0 14px;
+  line-height: 1.5;
+  flex: 1;
+}
+.nav-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--divider);
+  padding-top: 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.nav-card-count {
+  background: var(--surface3);
+  color: var(--muted);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.nav-card-arrow {
+  color: var(--muted2);
+  transition: transform .2s ease, color .2s ease;
+}
+.nav-card:hover .nav-card-arrow {
+  transform: translateX(3px);
+  color: var(--navy);
+}
+
+/* ── FOOTER ────────────────────────────────────────────────── */
+.landing-footer {
+  background: var(--surface);
+  border-top: 1px solid var(--divider);
+  padding: 18px 28px;
+  text-align: center;
+}
+.landing-footer-text {
+  font-size: 10.5px;
+  color: var(--muted2);
+  margin: 0;
+}
+.landing-footer-text strong {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ── MOBILE (≤ 700px) ─────────────────────────────────────── */
+@media (max-width: 700px) {
+  .topbar {
+    padding: 12px 16px;
+  }
+  .tb-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--divider);
+    flex-direction: column;
+    gap: 0;
+    padding: 8px 16px 14px;
+    align-items: stretch;
+  }
+  .tb-nav.open { display: flex; }
+  .tb-link {
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .tb-divider {
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin: 6px 0;
+  }
+  .tb-hamburger { display: block; }
+
+  .hero {
+    padding: 40px 18px 32px;
+  }
+  .hero h1 { font-size: 30px; }
+  .hero .hero-sub { font-size: 13px; }
+
+  .cards-section { padding: 0 16px 36px; }
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    max-width: 100%;
+  }
+}
+
+/* ── PRINT ────────────────────────────────────────────────── */
+@media print {
+  .topbar, .landing-footer { display: none; }
+  .hero { padding: 0 0 20px; }
+}

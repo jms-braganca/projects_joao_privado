@@ -1,0 +1,145 @@
+/* ==========================================================================
+   dashboard.js — JS compartilhado entre páginas internas
+   - Sorting de tabelas (≥768px)
+   - Toggle de seção Destaques
+   - Filtro de busca por nome/CNPJ
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  // ── DESTAQUES TOGGLE ──────────────────────────────────────────
+  window.toggleDestaques = function (btn) {
+    var body = btn.parentElement.querySelector('.dest-body');
+    if (!body) return;
+    var icon = btn.querySelector('.dest-toggle-icon');
+    var collapsed = body.classList.toggle('collapsed');
+    if (icon) icon.textContent = collapsed ? '▼' : '▲';
+  };
+
+  // ── SORTING DE TABELAS ────────────────────────────────────────
+  function initSorting(table) {
+    var headers = table.querySelectorAll('thead tr.col-header th');
+    headers.forEach(function (th, colIdx) {
+      if (colIdx < 2) return;
+      th.classList.add('sortable');
+      th.addEventListener('click', function () {
+        var asc = !th.classList.contains('sort-desc');
+        headers.forEach(function (h) { h.classList.remove('sort-asc', 'sort-desc'); });
+        th.classList.add(asc ? 'sort-desc' : 'sort-asc');
+        sortTable(table, colIdx, asc);
+      });
+    });
+  }
+  function sortTable(table, colIdx, asc) {
+    var tbody = table.querySelector('tbody');
+    var rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort(function (a, b) {
+      var aVal = getCellVal(a, colIdx);
+      var bVal = getCellVal(b, colIdx);
+      if (aVal === null && bVal === null) return 0;
+      if (aVal === null) return 1;
+      if (bVal === null) return -1;
+      return asc ? bVal - aVal : aVal - bVal;
+    });
+    rows.forEach(function (r) { tbody.appendChild(r); });
+  }
+  function getCellVal(row, colIdx) {
+    var cell = row.cells[colIdx];
+    if (!cell) return null;
+    var sortAttr = cell.getAttribute('data-sort');
+    if (sortAttr !== null && sortAttr !== '') {
+      var nAttr = parseFloat(sortAttr);
+      return isNaN(nAttr) ? null : nAttr;
+    }
+    var txt = cell.innerText.trim();
+    if (txt === '—' || txt === '-' || txt === '') return null;
+    txt = txt.replace(/[+%a-zA-Z ]/g, '').replace(',', '.');
+    var n = parseFloat(txt);
+    return isNaN(n) ? null : n;
+  }
+
+  // ── SEARCH (corrigido pra arquitetura multi-página) ──────────
+  // No DOM novo, cada página é standalone — não há mais panel-id.
+  // A função busca dentro do <main class="main"> (que sempre existe).
+  window.filtrar = function (input, panelId) {
+    var panel = null;
+    var inp = null;
+
+    if (typeof input === 'string') {
+      // Chamada legada: filtrar('fundos') ou filtrar('prev')
+      var aba = input;
+      var inputId = 'search' + (aba === 'fundos' ? 'Fundos' : 'Prev');
+      inp = document.getElementById(inputId);
+    } else {
+      // Chamada moderna: filtrar(this, 'mainFundos')
+      inp = input;
+    }
+
+    if (!inp) return;
+
+    // Procura container: tenta panelId antigo, senão pega o <main> da página
+    panel = (panelId && document.getElementById(panelId))
+         || document.querySelector('main.main')
+         || document.querySelector('main')
+         || document.querySelector('.panel-card');
+
+    if (!panel) return;
+
+    // Localiza o contador de resultados (na search-bar da própria página)
+    var cnt = inp.parentElement && inp.parentElement.parentElement
+              ? inp.parentElement.parentElement.querySelector('.search-count')
+              : document.querySelector('.search-count');
+
+    var q = (inp.value || '').trim().toLowerCase();
+    var total = 0;
+
+    panel.querySelectorAll('.classe-bloco').forEach(function (bloco) {
+      var visible = 0;
+
+      // Mobile cards
+      bloco.querySelectorAll('.fund-card').forEach(function (card) {
+        var show = !q || card.textContent.toLowerCase().indexOf(q) !== -1;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      // Desktop tables
+      bloco.querySelectorAll('tbody tr').forEach(function (row) {
+        // Pega o texto da primeira célula (fundo-col que tem nome+cnpj)
+        var fundoCol = row.querySelector('td.fundo-col') || row.cells[0];
+        var txt = fundoCol ? fundoCol.textContent : row.textContent;
+        var show = !q || txt.toLowerCase().indexOf(q) !== -1;
+        row.style.display = show ? '' : 'none';
+        // Conta só se mobile cards já não contou (evitar contagem dupla)
+        if (show && bloco.querySelectorAll('.fund-card').length === 0) {
+          visible++;
+        }
+      });
+
+      // Se tiver tanto mobile quanto desktop, conta o maior
+      if (bloco.querySelectorAll('.fund-card').length > 0) {
+        var visibleDesktop = bloco.querySelectorAll('tbody tr:not([style*="display: none"])').length;
+        visible = Math.max(visible, visibleDesktop);
+      }
+
+      bloco.classList.toggle('hidden', visible === 0 && !!q);
+      total += visible;
+    });
+
+    if (cnt) {
+      cnt.textContent = q
+        ? (total + ' fundo' + (total !== 1 ? 's' : '') + ' encontrado' + (total !== 1 ? 's' : ''))
+        : '';
+    }
+  };
+
+  // ── INIT ──────────────────────────────────────────────────────
+  function init() {
+    document.querySelectorAll('table').forEach(initSorting);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

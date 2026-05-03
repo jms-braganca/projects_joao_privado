@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Troca de Ativos · Calculadoras</title>
+<link rel="stylesheet" href="../shared/theme.css">
+<link rel="stylesheet" href="../shared/sidebar.css">
+<link rel="stylesheet" href="../shared/sidebar-sobre.css">
+<link rel="stylesheet" href="../shared/dashboard.css">
+<link rel="stylesheet" href="../shared/calc-common.css">
+<link rel="stylesheet" href="../shared/polish.css">
+</head>
+<body>
+
+<button class="hamburger" aria-label="Abrir menu">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+    <line x1="3" y1="6" x2="21" y2="6"/>
+    <line x1="3" y1="12" x2="21" y2="12"/>
+    <line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+</button>
+<div class="sidebar-backdrop"></div>
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <a href="../index.html" class="sb-brand">
+    <div class="sb-logo">i</div>
+    <div class="sb-brand-text">Ferramentas<br>Especialistas</div>
+  </a>
+
+  <div class="sb-section-label">Navegação</div>
+  <nav class="sb-nav">
+    <a href="../index.html" data-page="index.html" class="sb-link area-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      Início
+    </a>
+    <a href="../fundos.html" data-page="fundos.html" class="sb-link area-fundos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/>
+      </svg>
+      Fundos 555
+    </a>
+    <a href="../previdencia.html" data-page="previdencia.html" class="sb-link area-prev">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+      Previdência
+    </a>
+    <a href="../correlacao.html" data-page="correlacao.html" class="sb-link area-corr">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>
+        <path d="M12 3a13 13 0 0 1 0 18"/><path d="M12 3a13 13 0 0 0 0 18"/>
+      </svg>
+      Correlação
+    </a>
+    <a href="../calculadoras/index.html" data-page="calculadoras" class="sb-link area-calc">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="3" width="16" height="18" rx="2"/>
+        <line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="10" y2="11"/>
+        <line x1="13" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="10" y2="15"/>
+        <line x1="13" y1="15" x2="16" y2="15"/>
+      </svg>
+      Calculadoras
+    </a>
+  </nav>
+
+  <div class="sb-section-label sb-section-label-perfil">Perfil</div>
+  <nav class="sb-nav">
+    <a href="../sobre.html" data-page="sobre.html" class="sb-link area-sobre">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      Sobre
+    </a>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sb-footer-label">Atualizado</div>
+    <div class="sb-footer-value">02/05/2026</div>
+  </div>
+</aside>
+
+
+  <main class="main">
+    <div class="panel-card">
+
+      <div class="page-header">
+        <div class="page-title-block">
+          <nav class="breadcrumb" aria-label="Navegação">
+            <a href="../index.html">Início</a>
+            <span class="breadcrumb-sep">›</span>
+            <a href="index.html">Calculadoras</a>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-current">Troca de Ativos</span>
+          </nav>
+          <h1>Troca de Ativos</h1>
+        </div>
+      </div>
+
+      <div class="calc-clear-bar">
+        <button type="button" class="calc-clear-btn" title="Limpar todos os campos">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          Limpar Tudo
+        </button>
+      </div>
+
+      <div class="cc">
+        <div class="cc-ch"><span class="cc-dot" style="background:#5A6480"></span><span class="cc-ch-lbl">Premissas macroeconômicas</span></div>
+        <div class="cc-r2">
+          <div><label>CDI estimado a.a.</label><div class="pw"><input type="text" inputmode="decimal" id="t-cdi" placeholder="0,00"></div></div>
+          <div><label>IPCA estimado a.a.</label><div class="pw"><input type="text" inputmode="decimal" id="t-ipca" placeholder="0,00"></div></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="cc">
+          <div class="cc-ch"><span class="cc-dot" style="background:#002060"></span><span class="cc-ch-lbl">Papel atual</span></div>
+          <div class="cc-r2">
+            <div><label>Ticker</label><input type="text" id="t-pa-ticker" placeholder="ABCD11"></div>
+            <div><label>Emissor</label><input type="text" id="t-pa-emissor" placeholder="Banco XYZ"></div>
+          </div>
+          <div class="cc-r2" style="margin-top:8px">
+            <div><label>Indexador</label><select id="t-pa-idx"><option value="IPCA+">IPCA+</option><option value="%CDI">%CDI</option><option value="CDI+" selected>CDI+</option><option value="Pré">Pré</option></select></div>
+            <div><label>Taxa</label><div class="pw"><input type="text" inputmode="decimal" id="t-pa-taxa" placeholder="0,00"></div></div>
+          </div>
+          <label>Vencimento</label><input type="date" id="t-pa-venc">
+          <label>Valor bruto de curva (R$)</label><input type="text" inputmode="decimal" id="t-pa-vbc" placeholder="0,00">
+          <label>Valor líquido de venda (R$)</label><input type="text" inputmode="decimal" id="t-pa-vlv" placeholder="0,00">
+        </div>
+        <div class="cc">
+          <div class="cc-ch"><span class="cc-dot" style="background:#0A6640"></span><span class="cc-ch-lbl">Ativo novo</span></div>
+          <div class="cc-r2">
+            <div><label>Ticker</label><input type="text" id="t-an-ticker" placeholder="EFGH12"></div>
+            <div><label>Emissor</label><input type="text" id="t-an-emissor" placeholder="Banco ABC"></div>
+          </div>
+          <div class="cc-r2" style="margin-top:8px">
+            <div><label>Indexador</label><select id="t-an-idx"><option value="IPCA+">IPCA+</option><option value="%CDI">%CDI</option><option value="CDI+" selected>CDI+</option><option value="Pré">Pré</option></select></div>
+            <div><label>Taxa</label><div class="pw"><input type="text" inputmode="decimal" id="t-an-taxa" placeholder="0,00"></div></div>
+          </div>
+          <label>Vencimento do ativo novo</label><input type="date" id="t-an-venc">
+          <div class="cc-ir" style="margin-top:10px"><span class="cc-ir-lbl">Base de reinvestimento</span><span class="cc-ir-val" id="t-base-reinv">—</span></div>
+          <div class="cc-ir"><span class="cc-ir-lbl">Dias úteis até venc. atual</span><span class="cc-ir-val" id="t-du-atual">—</span></div>
+        </div>
+      </div>
+
+      <div class="cc" style="margin-top:12px">
+        <div class="cc-ch"><span class="cc-dot" style="background:#6B21A8"></span><span class="cc-ch-lbl">Resumo da operação</span></div>
+        <div class="cc-g3">
+          <div class="cc-mc"><div class="cc-mc-lbl">Valor do papel atual no vencimento</div><div class="cc-mc-val blu" id="t-r-pa">—</div></div>
+          <div class="cc-mc"><div class="cc-mc-lbl">Valor do novo ativo na mesma data</div><div class="cc-mc-val blu" id="t-r-an-d">—</div></div>
+          <div class="cc-mc"><div class="cc-mc-lbl">Ganho comparativo</div><div class="cc-mc-val" id="t-r-ganho">—</div></div>
+        </div>
+        <div class="cc-g3" style="margin-top:10px">
+          <div class="cc-mc"><div class="cc-mc-lbl">Ágio / deságio na saída</div><div class="cc-mc-val" id="t-r-agio">—</div></div>
+          <div class="cc-mc"><div class="cc-mc-lbl">Data de break even</div><div class="cc-mc-val sm" id="t-r-be-data">—</div></div>
+          <div class="cc-mc"><div class="cc-mc-lbl">Taxa de break even</div><div class="cc-mc-val sm" id="t-r-be-taxa">—</div></div>
+        </div>
+        <div style="margin-top:10px"><div class="cc-mc"><div class="cc-mc-lbl">Valor do novo ativo no próprio vencimento</div><div class="cc-mc-val blu" id="t-r-an-v">—</div></div></div>
+      </div>
+
+      <div class="cc" style="margin-top:12px">
+        <div class="cc-ch"><span class="cc-dot" style="background:#7A5C00"></span><span class="cc-ch-lbl">Break even por indexador</span></div>
+        <div class="cc-desc">Taxa mínima para o novo ativo igualar o papel atual até o vencimento do papel atual</div>
+        <div class="cc-g4">
+          <div class="cc-be-card"><div class="cc-be-lbl">CDI+</div><div class="cc-be-val" id="t-be-cdi">—</div></div>
+          <div class="cc-be-card"><div class="cc-be-lbl">% CDI</div><div class="cc-be-val" id="t-be-pct">—</div></div>
+          <div class="cc-be-card"><div class="cc-be-lbl">IPCA+</div><div class="cc-be-val" id="t-be-ipca">—</div></div>
+          <div class="cc-be-card"><div class="cc-be-lbl">Pré</div><div class="cc-be-val" id="t-be-pre">—</div></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../shared/sidebar.js"></script>
+<script src="../shared/data/feriados_anbima.js"></script>
+<script src="../shared/utils.js"></script>
+<script src="../shared/calc-common.js"></script>
+<script src="../shared/calc-troca.js"></script>
+<script src="../shared/polish.js"></script>
+</body>
+</html>
