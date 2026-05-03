@@ -181,6 +181,11 @@ body {
 .nav-card-icon.area-prev   { background: var(--pos-bg);  color: var(--pos);  }
 .nav-card-icon.area-corr   { background: var(--warn-bg); color: var(--warn); }
 .nav-card-icon.area-calc   { background: var(--info-bg); color: var(--info); }
+.nav-card-icon.area-comp {
+  background: #E0F7F9;
+  color: #0891b2;
+}
+
 
 .nav-card h3 {
   font-family: 'Playfair Display', Georgia, serif;

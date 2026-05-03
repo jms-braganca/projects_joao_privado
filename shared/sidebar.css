@@ -100,6 +100,7 @@
 .sb-link.active.area-calc      { background: var(--info-bg);  color: var(--info);  }
 .sb-link.active.area-portfolio { background: var(--info-bg);  color: var(--info);  }
 .sb-link.active.area-sobre     { background: var(--surface3); color: var(--text);  }
+.sb-link.active.area-comp { background: #E0F7F9; color: #0891b2; }
 
 /* Footer da sidebar */
 .sb-footer {
