@@ -291,3 +291,15 @@ body {
   .topbar, .landing-footer { display: none; }
   .hero { padding: 0 0 20px; }
 }
+
+/* Cor do ícone do card "Portfolio Tracker" */
+.nav-card-icon.area-portfolio {
+  background: linear-gradient(135deg, #4338CA 0%, #7C3AED 100%);
+  color: #fff;
+}
+
+/* Cor do ícone do card Portfolio Tracker */
+.nav-card-icon.area-portfolio {
+  background: linear-gradient(135deg, #4338CA 0%, #7C3AED 100%);
+  color: #fff;
+}
