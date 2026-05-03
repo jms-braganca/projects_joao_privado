@@ -93,11 +93,13 @@
 
 /* Estado ativo: cor por área */
 .sb-link.active { font-weight: 600; }
-.sb-link.active.area-home    { background: var(--navy-lt);  color: var(--navy);  }
-.sb-link.active.area-fundos  { background: var(--navy-lt);  color: var(--navy);  }
-.sb-link.active.area-prev    { background: var(--pos-bg);   color: var(--pos);   }
-.sb-link.active.area-corr    { background: var(--warn-bg);  color: var(--warn);  }
-.sb-link.active.area-calc    { background: var(--info-bg);  color: var(--info);  }
+.sb-link.active.area-home      { background: var(--navy-lt);  color: var(--navy);  }
+.sb-link.active.area-fundos    { background: var(--navy-lt);  color: var(--navy);  }
+.sb-link.active.area-prev      { background: var(--pos-bg);   color: var(--pos);   }
+.sb-link.active.area-corr      { background: var(--warn-bg);  color: var(--warn);  }
+.sb-link.active.area-calc      { background: var(--info-bg);  color: var(--info);  }
+.sb-link.active.area-portfolio { background: var(--info-bg);  color: var(--info);  }
+.sb-link.active.area-sobre     { background: var(--surface3); color: var(--text);  }
 
 /* Footer da sidebar */
 .sb-footer {
