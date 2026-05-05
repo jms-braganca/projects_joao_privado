@@ -2,6 +2,8 @@
    dashboard.js — JS compartilhado entre páginas internas
    - Sorting de tabelas (≥768px)
    - Toggle de seção Destaques
+   - Toggle de cada bloco de classe
+   - Scroll para classe via chips de atalho
    - Filtro de busca por nome/CNPJ
    ========================================================================== */
 (function () {
@@ -14,6 +16,32 @@
     var icon = btn.querySelector('.dest-toggle-icon');
     var collapsed = body.classList.toggle('collapsed');
     if (icon) icon.textContent = collapsed ? '▼' : '▲';
+  };
+
+  // ── CLASSE-BLOCO TOGGLE ───────────────────────────────────────
+  window.toggleClasseBloco = function (header, ev) {
+    if (ev) ev.stopPropagation();
+    var bloco = header.closest('.classe-bloco');
+    if (!bloco) return;
+    var body = bloco.querySelector('.classe-body');
+    if (!body) return;
+    var icon = header.querySelector('.classe-toggle-icon');
+    var collapsed = body.classList.toggle('collapsed');
+    if (icon) icon.textContent = collapsed ? '▶' : '▼';
+  };
+
+  // ── SCROLL PARA CLASSE (via chips de atalho) ──────────────────
+  window.scrollToClasse = function (id, ev) {
+    if (ev) ev.preventDefault();
+    var el = document.getElementById(id);
+    if (!el) return;
+    // Se estiver colapsado, expandir antes de rolar
+    var body = el.querySelector('.classe-body');
+    if (body && body.classList.contains('collapsed')) {
+      var header = el.querySelector('.classe-header');
+      if (header) window.toggleClasseBloco(header);
+    }
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   // ── SORTING DE TABELAS ────────────────────────────────────────
@@ -124,6 +152,16 @@
 
       bloco.classList.toggle('hidden', visible === 0 && !!q);
       total += visible;
+    });
+
+    // Atualiza contadores nos chips de atalho (classe-nav)
+    document.querySelectorAll('.classe-nav-chip').forEach(function (chip) {
+      var targetId = chip.getAttribute('data-target');
+      if (!targetId) return;
+      var bloco = document.getElementById(targetId);
+      if (!bloco) return;
+      // Esconder chip se a classe inteira não tem resultados
+      chip.style.display = bloco.classList.contains('hidden') ? 'none' : '';
     });
 
     if (cnt) {

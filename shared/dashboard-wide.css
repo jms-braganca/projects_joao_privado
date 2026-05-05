@@ -31,19 +31,10 @@
     max-width: none !important;
   }
 
-  /* Tabelas: full width sem scroll forçado */
-  .table-wrapper { overflow-x: visible; }
-  table { width: 100%; table-layout: auto; }
-
-  /* Densidade nas células */
-  thead tr.group-header th { padding: 9px 8px; }
-  thead tr.col-header th   { padding: 7px 8px; }
-  td                        { padding: 10px 8px; }
-  td.fundo-col              { min-width: 180px; padding-left: 14px; }
-
   /* Permitir crescimento livre dos containers internos */
   .page-header,
   .search-bar,
+  .classe-nav,
   .destaques-section,
   .classe-bloco,
   .footer { max-width: none; }
