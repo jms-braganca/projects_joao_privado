@@ -89,6 +89,23 @@
   // ── SEARCH (corrigido pra arquitetura multi-página) ──────────
   // No DOM novo, cada página é standalone — não há mais panel-id.
   // A função busca dentro do <main class="main"> (que sempre existe).
+
+  // Guarda o estado de cada classe-body antes da busca, pra restaurar quando limpa
+  var _classeStateSnapshot = null;
+
+  function setClasseExpanded(bloco, expanded) {
+    var body = bloco.querySelector('.classe-body');
+    if (!body) return;
+    var icon = bloco.querySelector('.classe-toggle-icon');
+    if (expanded) {
+      body.classList.remove('collapsed');
+      if (icon) icon.textContent = '▼';
+    } else {
+      body.classList.add('collapsed');
+      if (icon) icon.textContent = '▶';
+    }
+  }
+
   window.filtrar = function (input, panelId) {
     var panel = null;
     var inp = null;
@@ -121,6 +138,17 @@
     var q = (inp.value || '').trim().toLowerCase();
     var total = 0;
 
+    // Snapshot do estado atual ao iniciar uma busca (só na primeira keystroke)
+    if (q && _classeStateSnapshot === null) {
+      _classeStateSnapshot = {};
+      panel.querySelectorAll('.classe-bloco').forEach(function (bloco) {
+        var body = bloco.querySelector('.classe-body');
+        if (body && bloco.id) {
+          _classeStateSnapshot[bloco.id] = body.classList.contains('collapsed');
+        }
+      });
+    }
+
     panel.querySelectorAll('.classe-bloco').forEach(function (bloco) {
       var visible = 0;
 
@@ -151,8 +179,23 @@
       }
 
       bloco.classList.toggle('hidden', visible === 0 && !!q);
+
+      // Auto-expand/collapse durante a busca
+      if (q) {
+        // Expandir se tem matches; recolher (ou esconder) se não tem
+        setClasseExpanded(bloco, visible > 0);
+      } else if (_classeStateSnapshot && bloco.id in _classeStateSnapshot) {
+        // Busca foi limpa: restaura estado anterior
+        setClasseExpanded(bloco, !_classeStateSnapshot[bloco.id]);
+      }
+
       total += visible;
     });
+
+    // Quando a busca é limpa por completo, descarta snapshot
+    if (!q) {
+      _classeStateSnapshot = null;
+    }
 
     // Atualiza contadores nos chips de atalho (classe-nav)
     document.querySelectorAll('.classe-nav-chip').forEach(function (chip) {
