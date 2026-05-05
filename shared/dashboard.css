@@ -491,14 +491,12 @@
   /* ── COLUNAS COM LARGURAS FIXAS (CONSISTENTES ENTRE CLASSES) ───
      16 colunas total quando CAPTACAO_ENABLED:
        1) Fundo                — auto (resto disponível)
-       2) Última Cota          — 70px
+       2) Data Cota            — 84px  (cabe "30/04/2026")
        3-4) Captação (Mês/Ano) — 72px cada
        5-16) 4 períodos × 3    — Retorno 74px / Bench 60px / %Bench 64px
-     Soma fixa: 70 + 72*2 + (74+60+64)*4 = 70 + 144 + 792 = 1006px
-     O resto vai para a coluna Fundo (flexível).
   */
   table colgroup col.col-fundo  { width: auto; }
-  table colgroup col.col-data   { width: 70px; }
+  table colgroup col.col-data   { width: 84px; }
   table colgroup col.col-capt   { width: 72px; }
   table colgroup col.col-ret    { width: 74px; }
   table colgroup col.col-bm     { width: 60px; }
