@@ -313,7 +313,7 @@
       '<div class="cmp-bar-head">' +
         '<button type="button" id="cmp-btn-toggle-screening" class="cmp-bar-trigger" aria-expanded="false">' +
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>' +
-          '<span>Screening</span>' +
+          '<span>Filtrar fundos</span>' +
           '<span id="cmp-screen-active-pill" class="cmp-active-pill" hidden></span>' +
           '<svg class="cmp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
         '</button>' +
