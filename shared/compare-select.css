@@ -1,0 +1,497 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   compare-select.css
+   Duas barras independentes:
+     • Screening (filtros)  — neutra, dobra/desdobra
+     • Comparar (seleção)   — destaque teal (mesma cor da área "comparar"
+                              na sidebar), botão chamativo
+   Usa as variáveis do theme.css.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── Cor de destaque da área de Comparar ───────────────────────────────── */
+:root {
+  --cmp-teal:      #0891b2;
+  --cmp-teal-dk:   #0e7490;
+  --cmp-teal-lt:   #E0F4F8;
+  --cmp-teal-bd:   #B6E3EC;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CHECKBOX em cada linha/card de fundo
+   ══════════════════════════════════════════════════════════════════════════ */
+
+td.cmp-check-cell {
+  width: 36px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 6px 4px;
+  border-right: 1px solid var(--border);
+}
+
+th.cmp-check-cell {
+  width: 36px;
+}
+
+.fund-card.fund-row.has-cmp-check {
+  position: relative;
+  padding-left: 36px !important;
+}
+
+.fund-card.fund-row.has-cmp-check > .cmp-check-wrap {
+  position: absolute;
+  left: 8px;
+  top: 12px;
+}
+
+.cmp-check-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cmp-check {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border-s);
+  border-radius: 4px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  display: inline-block;
+  position: relative;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.cmp-check:hover {
+  border-color: var(--cmp-teal);
+}
+
+.cmp-check:checked {
+  background: var(--cmp-teal);
+  border-color: var(--cmp-teal);
+}
+
+.cmp-check:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 1.8px 1.8px 0;
+  transform: rotate(45deg);
+}
+
+/* Esconde bloco de classe quando todas linhas estão filtradas */
+.classe-bloco.cmp-empty-by-screening {
+  display: none;
+}
+
+/* Como a barra Comparar é fixed no rodapé, reserva espaço no fim da página
+   pra que o último conteúdo (footer, última linha de fundos) não fique
+   escondido atrás dela. */
+body {
+  padding-bottom: 80px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BARRA DE SCREENING (filtros) — neutra, expansível
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Garante que [hidden] vence o display:flex/inline-flex que aplicamos a
+   alguns elementos da barra. Sem isso, o painel de screening não recolhe
+   e o pill "N filtros ativos" continua aparecendo zero. */
+.cmp-screening-bar [hidden],
+.cmp-compare-bar [hidden] {
+  display: none !important;
+}
+
+.cmp-screening-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin: 0 0 10px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.cmp-bar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+}
+
+.cmp-bar-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  padding: 6px 8px;
+  margin-left: -8px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.cmp-bar-trigger:hover {
+  background: var(--surface3);
+}
+
+.cmp-bar-trigger .cmp-chev {
+  transition: transform 0.18s ease;
+  color: var(--muted);
+}
+
+.cmp-bar-trigger.active {
+  color: var(--navy);
+}
+
+.cmp-bar-trigger.active .cmp-chev {
+  transform: rotate(180deg);
+}
+
+.cmp-active-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--navy-lt);
+  color: var(--navy);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cmp-screen-count {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.cmp-screening {
+  padding: 4px 14px 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cmp-screen-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cmp-screen-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Pills de prazo */
+.cmp-prazo-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cmp-pill-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--border-s);
+  border-radius: 99px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  background: var(--surface);
+  user-select: none;
+}
+
+.cmp-pill-check:hover {
+  border-color: var(--navy);
+}
+
+.cmp-pill-check input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--border-s);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  margin: 0;
+}
+
+.cmp-pill-check input[type="checkbox"]:checked {
+  background: var(--navy);
+  border-color: var(--navy);
+}
+
+.cmp-pill-check input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 0;
+  width: 4px;
+  height: 7px;
+  border: solid white;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+}
+
+.cmp-pill-check:has(input:checked) {
+  background: var(--navy-lt);
+  border-color: var(--navy);
+  color: var(--navy);
+}
+
+/* Radio + slider */
+.cmp-radio-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.cmp-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.cmp-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--muted);
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.cmp-slider-cap {
+  font-size: 11px;
+  color: var(--muted2);
+  min-width: 40px;
+}
+
+.cmp-slider-row input[type="range"] {
+  flex: 1;
+  min-width: 160px;
+  max-width: 320px;
+  accent-color: var(--navy);
+}
+
+.cmp-slider-out {
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 130px;
+  font-size: 13px;
+}
+
+.cmp-screen-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BARRA DE COMPARAR (seleção) — destaque teal, FIXA no rodapé
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* A barra fica fixa no rodapé pra acompanhar o usuário enquanto ele rola
+   a página marcando fundos. No final, basta clicar Comparar. */
+.cmp-compare-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+
+  background: linear-gradient(135deg, #ffffff 0%, var(--cmp-teal-lt) 100%);
+  border: 1px solid var(--cmp-teal-bd);
+  border-radius: 999px;
+  padding: 8px 8px 8px 18px;
+
+  /* Sombra mais forte pra destacar do conteúdo embaixo */
+  box-shadow:
+    0 2px 8px rgba(8, 145, 178, 0.10),
+    0 8px 24px rgba(8, 145, 178, 0.18);
+
+  /* Largura razoável: não ocupa a tela toda, mas tem espaço pros itens */
+  max-width: calc(100vw - 32px);
+}
+
+/* Quando 0 selecionados, atenua a barra (não some) — mostra que ela existe
+   e o que faz, mas não chama atenção. */
+.cmp-compare-bar.cmp-empty {
+  opacity: 0.7;
+  background: var(--surface);
+  box-shadow: 0 2px 12px rgba(0, 32, 96, 0.08);
+}
+
+.cmp-compare-bar.cmp-empty .cmp-counter {
+  border-left-color: var(--border);
+}
+
+.cmp-compare-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cmp-teal-dk);
+  flex-wrap: wrap;
+}
+
+.cmp-compare-left > svg {
+  flex-shrink: 0;
+}
+
+.cmp-compare-title {
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  color: var(--cmp-teal-dk);
+}
+
+.cmp-compare-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cmp-counter {
+  font-size: 12.5px;
+  color: var(--cmp-teal-dk);
+  padding-left: 12px;
+  margin-left: 4px;
+  border-left: 1px solid var(--cmp-teal-bd);
+}
+
+.cmp-counter strong {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BOTÕES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.cmp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-s);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  font-family: inherit;
+  line-height: 1;
+}
+
+.cmp-btn:hover:not(:disabled) {
+  background: var(--surface3);
+  border-color: var(--navy);
+}
+
+.cmp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cmp-btn-ghost {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.cmp-btn-ghost:disabled {
+  opacity: 0.4;
+}
+
+/* Botão "Comparar selecionados" — destaque teal */
+.cmp-btn-compare {
+  background: var(--cmp-teal);
+  border-color: var(--cmp-teal);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(8, 145, 178, 0.18);
+}
+
+.cmp-btn-compare:hover:not(:disabled) {
+  background: var(--cmp-teal-dk);
+  border-color: var(--cmp-teal-dk);
+  box-shadow: 0 3px 12px rgba(8, 145, 178, 0.28);
+}
+
+.cmp-btn-compare:disabled {
+  background: var(--cmp-teal);
+  border-color: var(--cmp-teal);
+  color: #fff;
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+.cmp-btn-sm {
+  font-size: 12px;
+  padding: 5px 10px;
+}
+
+.cmp-btn.cmp-flash {
+  animation: cmp-flash 0.55s ease;
+}
+
+@keyframes cmp-flash {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06); box-shadow: 0 0 0 4px rgba(181,43,43,0.2); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RESPONSIVO
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+  .cmp-compare-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .cmp-compare-left,
+  .cmp-compare-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .cmp-counter {
+    border-left: 0;
+    padding-left: 0;
+    margin-left: auto;
+  }
+  .cmp-radio-row { gap: 10px; }
+  .cmp-slider-row { font-size: 11px; }
+}
