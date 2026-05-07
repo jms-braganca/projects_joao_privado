@@ -478,20 +478,95 @@ body {
    ══════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 600px) {
+  /* No mobile, a pílula central ocupa toda a largura, colada no rodapé.
+     Layout horizontal compacto: título escondido (só o ícone fica), contador
+     mais discreto, dois botões enxutos. */
   .cmp-compare-bar {
-    flex-direction: column;
-    align-items: stretch;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    padding: 8px 10px;
+    gap: 8px;
+    flex-wrap: nowrap;
+    max-width: 100%;
   }
-  .cmp-compare-left,
+
+  /* Esconde o título "Comparar fundos" no mobile pra economizar espaço.
+     O ícone + contador já passam a mensagem. */
+  .cmp-compare-title {
+    display: none;
+  }
+
+  .cmp-compare-left {
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
   .cmp-compare-right {
-    width: 100%;
-    justify-content: space-between;
+    flex: 0 0 auto;
+    gap: 6px;
+    margin-left: auto;
   }
+
+  /* Contador: "0/10 selecionado(s)" → só "0/10" no mobile.
+     Como o "0" é dinâmico (atualizado pelo JS) dentro de <strong id="cmp-count">,
+     não dá pra fazer só com ::before. Estratégia: esconde o texto após o
+     <strong> com um seletor hack — usamos visibility: hidden + width 0 no
+     restante do conteúdo via ajuste no font-size do span pai. */
   .cmp-counter {
     border-left: 0;
     padding-left: 0;
-    margin-left: auto;
+    margin-left: 0;
+    font-size: 0;       /* esconde " /10 selecionado(s)" */
   }
+  .cmp-counter strong {
+    font-size: 13px;    /* mostra apenas o número dinâmico */
+  }
+  .cmp-counter strong::after {
+    content: '/10';
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--cmp-teal-dk);
+  }
+
+  /* Botões mais compactos no mobile */
+  .cmp-compare-bar .cmp-btn {
+    padding: 7px 11px;
+    font-size: 12px;
+  }
+  /* Encurta os labels: "Limpar seleção" → "Limpar", "Comparar selecionados"
+     → "Comparar". Esconde o texto original com font-size 0 e injeta o curto
+     via ::before (sem precisar mexer no JS/HTML). */
+  .cmp-compare-bar #cmp-btn-clear,
+  .cmp-compare-bar #cmp-btn-go {
+    font-size: 0;
+  }
+  .cmp-compare-bar #cmp-btn-clear::before {
+    content: 'Limpar';
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .cmp-compare-bar #cmp-btn-go::before {
+    content: 'Comparar';
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Reserva mais espaço pra footer/conteúdo não ficar atrás */
+  body {
+    padding-bottom: 64px;
+  }
+
+  /* Botão "voltar ao topo" (.scroll-top do polish.js) — afasta da pílula
+     no mobile pra não sobrepor */
+  .scroll-top {
+    bottom: 76px !important;
+  }
+
   .cmp-radio-row { gap: 10px; }
   .cmp-slider-row { font-size: 11px; }
 }
