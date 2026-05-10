@@ -45,16 +45,25 @@
   };
 
   // ── SORTING DE TABELAS ────────────────────────────────────────
+  // IMPORTANTE: o colIdx do <th> é resolvido DINAMICAMENTE no click,
+  // não capturado em closure. O compare-select.js injeta uma coluna
+  // <th class="cmp-check-cell"> no início da tabela DEPOIS que este
+  // script roda — o que deslocaria todos os índices em +1 se a gente
+  // tivesse capturado colIdx no momento da inicialização. Resolvendo
+  // dinamicamente, o sort fica correto independente do que foi injetado.
   function initSorting(table) {
     var headers = table.querySelectorAll('thead tr.col-header th');
-    headers.forEach(function (th, colIdx) {
-      if (colIdx < 2) return;
+    headers.forEach(function (th, idx) {
+      // Pula as 2 primeiras colunas (Fundo e Data Cota — não são sortáveis).
+      if (idx < 2) return;
       th.classList.add('sortable');
       th.addEventListener('click', function () {
+        // Recalcula índice REAL no DOM atual (compensa colunas injetadas)
+        var realIdx = Array.prototype.indexOf.call(th.parentElement.children, th);
         var asc = !th.classList.contains('sort-desc');
         headers.forEach(function (h) { h.classList.remove('sort-asc', 'sort-desc'); });
         th.classList.add(asc ? 'sort-desc' : 'sort-asc');
-        sortTable(table, colIdx, asc);
+        sortTable(table, realIdx, asc);
       });
     });
   }

@@ -1,0 +1,313 @@
+/* ============================================================
+   calc-apos.css — Aposentadoria
+   Carregado depois de calc-common.css.
+   ============================================================ */
+
+/* ── TOOLTIP ÂMBAR (mesma estilização da calc-pgbl) ──────────── */
+.cc-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-left: 4px;
+  vertical-align: middle;
+  cursor: help;
+}
+.cc-tip-ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #F59E0B;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: Georgia, serif;
+  font-style: italic;
+  line-height: 1;
+  user-select: none;
+}
+.cc-tip:hover .cc-tip-ic { background: #92400E; }
+.cc-tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  width: max-content;
+  max-width: 280px;
+  background: #1F2937;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.45;
+  padding: 8px 11px;
+  border-radius: 6px;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .12s ease, visibility .12s ease;
+  z-index: 100;
+  white-space: normal;
+  box-shadow: 0 8px 16px rgba(0,0,0,.18);
+}
+.cc-tip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1F2937;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .12s ease, visibility .12s ease;
+  z-index: 100;
+}
+.cc-tip:hover::after,
+.cc-tip:hover::before { opacity: 1; visibility: visible; }
+
+/* ── PILL "IDADE NA APOSENTADORIA" ────────────────────────────── */
+.ap-idade-fim {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-top: 10px;
+  font-size: 12px;
+}
+.ap-idade-fim-lbl { color: var(--muted); font-weight: 500; }
+.ap-idade-fim-val { color: var(--navy); font-weight: 700; font-size: 13px; }
+
+/* ── SLIDER (já estilizado em calc-common.css; só ajustes) ───── */
+/* Linha do slider da aposentadoria: cap-início, slider, cap-fim
+   sem nada depois — sem wrap, caps colados nas pontas. */
+.ap-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+.ap-slider-row .cc-slider-cap {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--muted2);
+  min-width: 0;            /* sobrescreve o min-width:40px do .cc-slider-cap */
+  font-variant-numeric: tabular-nums;
+}
+.ap-slider-row .cc-slider-cap:first-child {
+  text-align: right;
+  min-width: 32px;
+}
+.ap-slider-row .cc-slider-cap:last-child {
+  text-align: left;
+  min-width: 40px;
+}
+.ap-slider-row input[type="range"] {
+  flex: 1 1 auto;
+  margin: 0;
+}
+
+.cc-slider-row input[type="range"] {
+  flex: 1;
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, var(--pos-bg), var(--pos));
+  border-radius: 4px;
+  outline: none;
+}
+.cc-slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--navy);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,.18);
+}
+.cc-slider-row input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--navy);
+  cursor: pointer;
+}
+.cc-slider-out {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 130px;
+  text-align: right;
+}
+
+/* ── DESTAQUE "APORTE MENSAL NECESSÁRIO" ──────────────────────── */
+/* Mais respiração interna que o .cc-res-wrap padrão (que é usado por
+   calculadoras com pouco conteúdo no destaque). Aqui o valor é grande
+   e merece ar em volta. */
+#ap-aporte-wrap {
+  margin-top: 16px;
+  margin-bottom: 18px;
+  padding: 28px 32px;
+}
+#ap-aporte-wrap .cc-res-lbl {
+  margin-bottom: 12px;
+  font-size: 10px;
+}
+#ap-aporte-wrap .cc-res-val {
+  font-size: 42px;
+  letter-spacing: -0.6px;
+  line-height: 1.05;
+}
+#ap-aporte-wrap .cc-res-sub {
+  margin-top: 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,.72);
+}
+
+/* ── GRID DOS 4 KPIs (renda compl, patr alvo, total aport, rend acum) ── */
+/* Mais gap entre os cards e mais padding interno pra ficar respirado.
+   Cards ganham borda sutil pra terem presença visual mesmo quando fundo
+   muito claro. */
+.cc-info-grid {
+  gap: 12px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+.cc-ic {
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  box-shadow: 0 1px 2px rgba(0,0,0,.03);
+  transition: border-color .12s, box-shadow .12s;
+}
+.cc-ic:hover {
+  border-color: var(--border-s);
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+.cc-ic-lbl {
+  margin-bottom: 6px;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+}
+.cc-ic-val {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+/* ── TABELA DE CENÁRIOS — MATRIZ Renda × Anos ───────────────── */
+
+/* Group header "Anos até aposentar" — tom do navy mais leve pra
+   diferenciar do thead principal (que é azul navy escuro). */
+.ap-matriz thead tr:first-child th.ap-col-group {
+  background: var(--navy2, #003399);
+  text-align: center;
+  font-size: 8px;
+  letter-spacing: 1.4px;
+}
+
+/* Linha 2 do thead: anos individuais */
+.ap-matriz thead tr:nth-child(2) th {
+  background: var(--navy);
+  text-align: center;
+  font-size: 9px;
+  padding: 7px 6px;
+  letter-spacing: .5px;
+  font-weight: 600;
+}
+
+/* Coluna 1 (Renda Mensal) e 2 (Patrimônio Necessário): mais ar */
+.ap-matriz tbody td.ap-renda-cell {
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  background: var(--surface2);
+}
+.ap-matriz tbody td:nth-child(2) {
+  color: var(--navy);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Células de aporte (numérico, alinha à direita) */
+.ap-matriz tbody td.ap-aporte-cell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 8px 12px;
+}
+
+/* Linha do cenário do user (renda central) — fundo + cor */
+.ap-matriz tbody tr.ap-row-active {
+  background: rgba(0, 32, 96, 0.04);
+}
+.ap-matriz tbody tr.ap-row-active td {
+  font-weight: 700;
+}
+.ap-matriz tbody tr.ap-row-active td.ap-renda-cell {
+  background: rgba(0, 32, 96, 0.10);
+  color: var(--navy);
+}
+
+/* Coluna do prazo do user (anos central) — fundo levemente azulado */
+.ap-matriz tbody td.ap-aporte-cell:nth-of-type(5) {
+  /* nth-of-type(5) = 3ª coluna de aporte (renda + patrim + 1+2 = pos 5) */
+  background: rgba(0, 32, 96, 0.04);
+}
+.ap-matriz thead th.ap-cell-active {
+  background: var(--pos) !important;
+  color: #fff;
+}
+
+/* Célula central (cenário do user, intersecção): destaque forte */
+.ap-matriz tbody tr.ap-row-active td.ap-aporte-cell.ap-cell-active {
+  background: var(--pos) !important;
+  color: #fff !important;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
+}
+
+.ap-ok {
+  color: var(--pos);
+  font-weight: 700;
+}
+
+/* Mobile: ajustes pra cards e destaque ficarem proporcionais */
+@media (max-width: 700px) {
+  #ap-aporte-wrap {
+    padding: 22px 18px;
+  }
+  #ap-aporte-wrap .cc-res-val {
+    font-size: 32px;
+  }
+  .cc-info-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .cc-ic {
+    padding: 12px 14px;
+  }
+  .cc-ic-val {
+    font-size: 15px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .cc-tip::after { max-width: 220px; font-size: 10.5px; }
+  .cc-slider-out { min-width: auto; font-size: 11px; }
+}

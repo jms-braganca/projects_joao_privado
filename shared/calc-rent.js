@@ -95,6 +95,68 @@
   var clearBtn = document.querySelector('.calc-clear-btn');
   if (clearBtn) clearBtn.addEventListener('click', function () { limparCalculadora(calcRent); });
 
+  /* ── PDF ──────────────────────────────────────────────── */
+  function gerarPDF() {
+    var get = function (id) { var el = document.getElementById(id); return el ? (el.value || '—') : '—'; };
+    var getT = function (id) {
+      var el = document.getElementById(id);
+      return el ? (el.textContent || '').trim() : '—';
+    };
+    var fmtData = function (iso) {
+      if (!iso) return '—';
+      return new Date(iso + 'T12:00:00').toLocaleDateString('pt-BR');
+    };
+    var ativo = get('r3-ativo');
+    if (ativo === '—' || !ativo.trim()) ativo = 'Ativo (sem nome)';
+    var isento = document.getElementById('r3-isento');
+    var isentoTxt = (isento && isento.checked) ? 'Sim' : 'Não';
+
+    var tabelaRows = [
+      ['Curva — Valor atual',         getT('r3-c-vbr'),    getT('r3-c-vlq')],
+      ['Curva — Rentab. total',       getT('r3-c-rtbr'),   getT('r3-c-rtlq')],
+      ['Curva — Rentab. anual',       getT('r3-c-rabr'),   getT('r3-c-ralq')],
+      ['Curva — % CDI',               getT('r3-c-cdibr'),  getT('r3-c-cdilq')],
+      ['Curva — IPCA+',               getT('r3-c-ipcabr'), getT('r3-c-ipcalq')],
+      ['Venda — Valor atual',         getT('r3-v-vbr'),    getT('r3-v-vlq')],
+      ['Venda — Rentab. total',       getT('r3-v-rtbr'),   getT('r3-v-rtlq')],
+      ['Venda — Rentab. anual',       getT('r3-v-rabr'),   getT('r3-v-ralq')],
+      ['Venda — % CDI',               getT('r3-v-cdibr'),  getT('r3-v-cdilq')],
+      ['Venda — IPCA+',               getT('r3-v-ipcabr'), getT('r3-v-ipcalq')],
+    ];
+
+    gerarPDFCalc({
+      titulo:    'Rentabilidade — ' + ativo,
+      subtitulo: 'CDI/IPCA: BACEN/SGS',
+      tituloPremissas: 'Premissas',
+      premissas: [
+        { lbl: 'Ativo',                val: ativo },
+        { lbl: 'Isento de IR',         val: isentoTxt },
+        { lbl: 'Data aplicação',       val: fmtData(get('r3-dt-aplic')) },
+        { lbl: 'Data vencimento',      val: fmtData(get('r3-dt-venc')) },
+        { lbl: 'Data cotação',         val: fmtData(get('r3-dt-cotac')) },
+        { lbl: 'Valor aplicado',       val: 'R$ ' + get('r3-v-aplic') },
+        { lbl: 'Valor curva',          val: 'R$ ' + get('r3-v-curva') },
+        { lbl: 'Valor venda',          val: 'R$ ' + get('r3-v-venda') },
+      ],
+      tituloResultado: 'Indicadores do período',
+      resultado: [
+        { lbl: 'Dias corridos',  val: getT('r3-dc') },
+        { lbl: 'Dias úteis',     val: getT('r3-du') },
+        { lbl: 'Alíquota IR',    val: getT('r3-ir') },
+        { lbl: 'CDI no período', val: getT('r3-cdi-p'), col: 'pos' },
+        { lbl: 'IPCA no período',val: getT('r3-ipca-p'), col: 'pos' },
+      ],
+      tabela: {
+        titulo: 'Curva (valor teórico) × Venda (marcação a mercado)',
+        thead:  ['Métrica', 'Bruto', 'Líquido'],
+        rows:   tabelaRows,
+      },
+      discWarn: true,
+    });
+  }
+  var pdfBtn = document.getElementById('r3-pdf-btn');
+  if (pdfBtn) pdfBtn.addEventListener('click', gerarPDF);
+
   instalarFormatacao();
   calcRent();
 })();

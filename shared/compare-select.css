@@ -201,6 +201,49 @@ body {
   color: var(--muted);
 }
 
+/* Segmented control (12m / 24m) — fica em sua própria linha,
+   abaixo do label "Retorno mínimo", alinhado à esquerda. */
+.cmp-janela-toggle {
+  display: inline-flex;
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border-s);
+  border-radius: 99px;
+  padding: 2px;
+  gap: 0;
+}
+
+.cmp-janela-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 99px;
+  user-select: none;
+  transition: all 0.12s ease;
+  line-height: 1;
+}
+
+.cmp-janela-pill input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cmp-janela-pill:hover {
+  color: var(--navy);
+}
+
+.cmp-janela-pill:has(input:checked) {
+  background: var(--navy);
+  color: #fff;
+}
+
 /* Pills de prazo */
 .cmp-prazo-pills {
   display: flex;

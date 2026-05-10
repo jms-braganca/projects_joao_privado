@@ -1,0 +1,149 @@
+/* ============================================================
+   calc-pgbl.css — Simulador PGBL
+   Carregado depois de calc-common.css.
+   ============================================================ */
+
+/* Estilos da barra flutuante "Gerar PDF" agora vivem em calc-common.css
+   como .calc-pdf-bar (genérico, todas as calculadoras compartilham). */
+
+/* ── TOOLTIP ÂMBAR (i no círculo) ─────────────────────────────── */
+.cc-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-left: 4px;
+  vertical-align: middle;
+  cursor: help;
+}
+.cc-tip-ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #F59E0B;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: Georgia, serif;
+  font-style: italic;
+  line-height: 1;
+  user-select: none;
+}
+.cc-tip:hover .cc-tip-ic {
+  background: #92400E;
+}
+
+/* Balão. Aparece em hover. Fica logo acima do "i", centralizado. */
+.cc-tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  width: max-content;
+  max-width: 280px;
+  background: #1F2937;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.45;
+  padding: 8px 11px;
+  border-radius: 6px;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .12s ease, visibility .12s ease;
+  z-index: 100;
+  white-space: normal;
+  box-shadow: 0 8px 16px rgba(0,0,0,.18);
+}
+.cc-tip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1F2937;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .12s ease, visibility .12s ease;
+  z-index: 100;
+}
+.cc-tip:hover::after,
+.cc-tip:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ── TABELA COMPARATIVA PGBL ──────────────────────────────────── */
+.pg-tbl tbody td:not(:first-child) {
+  font-variant-numeric: tabular-nums;
+}
+/* Linhas-resumo destacadas */
+.pg-tbl tbody tr.pg-row-total {
+  background: var(--surface2);
+}
+.pg-tbl tbody tr.pg-row-total td:first-child {
+  color: var(--text);
+  font-weight: 700;
+}
+.pg-tbl tbody tr.pg-row-ir td:first-child,
+.pg-tbl tbody tr.pg-row-saldo td:first-child {
+  color: var(--text);
+  font-weight: 700;
+}
+.pg-tbl tbody tr.pg-row-saldo {
+  background: var(--surface2);
+}
+
+/* Colunas: enfatiza visualmente "Completo c/ PGBL" (a melhor) */
+.pg-tbl thead th:nth-child(4),
+.pg-tbl tbody td:nth-child(4) {
+  background: rgba(10, 102, 64, 0.05);
+}
+.pg-tbl thead th:nth-child(4) {
+  background: var(--pos);
+}
+
+/* Estados de saldo (a restituir / a pagar) */
+.pg-restituir {
+  color: var(--pos);
+  font-weight: 700;
+}
+.pg-pagar {
+  color: var(--neg);
+  font-weight: 700;
+}
+
+/* ── BLOCO "VOCÊ PODE APORTAR" — pequenos ajustes ───────────────── */
+#pg-aporte-wrap {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+#pg-aporte-wrap .cc-res-val {
+  font-size: 32px;
+}
+
+/* ── ÍCONE i ATIVO PARA AREA-PGBL DA SIDEBAR ────────────────────── */
+.sb-link.active.area-pgbl {
+  background: #FFF8E1;
+  color: #92400E;
+}
+
+/* Mobile: tabela compacta */
+@media (max-width: 700px) {
+  .pg-tbl thead th,
+  .pg-tbl tbody td { padding: 7px 8px; font-size: 11px; }
+  .pg-tbl tbody td:not(:first-child) { font-size: 12px; }
+  #pg-aporte-wrap .cc-res-val { font-size: 24px; }
+  /* Tooltip não pode sair da tela em mobile — alarga limites */
+  .cc-tip::after { max-width: 220px; font-size: 10.5px; }
+}

@@ -317,6 +317,9 @@
 .fc-captacao { font-size: 10px; font-weight: 600; }
 
 .rc-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; }
+/* Em mobile (cards) escondemos a célula "Mês Anterior" pra não apertar
+   demais com 5 períodos. Desktop (.desktop-table) continua mostrando os 5. */
+.mobile-cards .rc.rc-mes-anterior { display: none; }
 .rc {
   background: var(--bg);
   border: 1px solid var(--border);

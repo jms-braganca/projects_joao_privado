@@ -32,29 +32,39 @@
 
   // ── Auto-marcar item ativo baseado na URL ─────────────────
   function markActive() {
-    // pathname ex.: '/fundos.html', '/calculadoras/', '/calculadoras/index.html', '/calculadoras/troca-ativos.html'
+    // pathname ex.: '/fundos.html', '/calculadoras/', '/calculadoras/index.html',
+    //               '/calculadoras/troca-ativos.html', '/calculadoras/simular-pgbl.html'
     var pathname = window.location.pathname;
     var parts = pathname.split('/').filter(Boolean); // remove vazios
     var lastPart = parts[parts.length - 1] || 'index.html';
 
-    // Detecta se está dentro da subpasta /calculadoras/
+    // Está dentro da subpasta /calculadoras/?
     var dentroCalc = parts.indexOf('calculadoras') !== -1;
 
     var links = document.querySelectorAll('.sb-link[data-page]');
+
+    // Primeira passada: existe link com data-page === arquivo atual?
+    // (ex: simular-pgbl.html tem o seu próprio link na sidebar.)
+    var temMatchExato = false;
+    links.forEach(function(link) {
+      if (link.dataset.page === lastPart) temMatchExato = true;
+    });
+
+    // Segunda passada: aplica a class "active" obedecendo a precedência:
+    //   1) match exato (data-page === arquivo)
+    //   2) home (index.html quando estamos na raiz)
+    //   3) fallback "Calculadoras" — só quando dentro de /calculadoras/
+    //      e nenhum link específico bate (ex: troca-ativos.html, limite-fgc.html etc.)
     links.forEach(function(link) {
       var page = link.dataset.page;
       var isActive = false;
 
-      // CASO ESPECIAL: qualquer página dentro de /calculadoras/ ativa o link Calculadoras
-      if (dentroCalc) {
-        if (page === 'calculadoras') isActive = true;
-      } else {
-        // FORA de /calculadoras/: comportamento normal
-        if (page === lastPart) {
-          isActive = true;
-        } else if (page === 'index.html' && (lastPart === '' || lastPart === '/' || pathname === '/')) {
-          isActive = true;
-        }
+      if (page === lastPart) {
+        isActive = true;
+      } else if (page === 'index.html' && (lastPart === '' || lastPart === '/' || pathname === '/')) {
+        isActive = true;
+      } else if (dentroCalc && page === 'calculadoras' && !temMatchExato) {
+        isActive = true;
       }
 
       if (isActive) link.classList.add('active');

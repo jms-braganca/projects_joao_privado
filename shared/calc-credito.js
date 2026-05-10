@@ -2,6 +2,15 @@
 (function () {
   'use strict';
 
+  // Formata número sem prefixo "R$" (usado no cronograma — a unidade
+  // aparece uma única vez no cabeçalho da seção pra economizar largura).
+  function fBR_n(v) {
+    if (isNaN(v) || !isFinite(v)) return '—';
+    return (v < 0 ? '-' : '') + Math.abs(v).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2, maximumFractionDigits: 2
+    });
+  }
+
   function calcCredito() {
     var valor    = pBR(document.getElementById('cr-valor').value);
     var taxaMes  = pBR(document.getElementById('cr-taxa').value)/100;
@@ -115,18 +124,18 @@
       html +=
         '<tr>' +
         '<td style="text-align:center;font-weight:600">' + r.mes + tagCar + '</td>' +
-        '<td>' + fBRL(r.saldoDev) + '</td>' +
-        '<td style="color:var(--neg)">' + fBRL(r.juros) + '</td>' +
-        '<td>' + fBRL(r.amort) + '</td>' +
-        '<td style="font-weight:600">' + fBRL(r.parcela) + '</td>' +
-        '<td>' + fBRL(r.saldoFim) + '</td>' +
-        '<td>' + fBRL(r.valIni) + '</td>' +
-        '<td style="color:var(--pos)">' + fBRL(r.rend) + '</td>' +
-        '<td>' + fBRL(r.pgto) + '</td>' +
-        '<td>' + fBRL(r.valFim) + '</td>' +
-        '<td style="color:' + difCol + '">' + fBRL(r.difMes) + '</td>' +
-        '<td style="color:' + difAccCol + ';font-weight:600">' + fBRL(r.difAcc) + '</td>' +
-        '<td style="color:var(--pos);font-weight:600">' + fBRL(r.rendAcc) + '</td>' +
+        '<td>' + fBR_n(r.saldoDev) + '</td>' +
+        '<td style="color:var(--neg)">' + fBR_n(r.juros) + '</td>' +
+        '<td>' + fBR_n(r.amort) + '</td>' +
+        '<td style="font-weight:600">' + fBR_n(r.parcela) + '</td>' +
+        '<td>' + fBR_n(r.saldoFim) + '</td>' +
+        '<td>' + fBR_n(r.valIni) + '</td>' +
+        '<td style="color:var(--pos)">' + fBR_n(r.rend) + '</td>' +
+        '<td>' + fBR_n(r.pgto) + '</td>' +
+        '<td>' + fBR_n(r.valFim) + '</td>' +
+        '<td style="color:' + difCol + '">' + fBR_n(r.difMes) + '</td>' +
+        '<td style="color:' + difAccCol + ';font-weight:600">' + fBR_n(r.difAcc) + '</td>' +
+        '<td style="color:var(--pos);font-weight:600">' + fBR_n(r.rendAcc) + '</td>' +
         '</tr>';
     }
     document.getElementById('cr-tbody').innerHTML = html;
@@ -144,13 +153,34 @@
     var carencia = carenciaSel.options[carenciaSel.selectedIndex].text;
     var ganhoCls = document.getElementById('cr-r-ganho').className.indexOf('grn') >= 0 ? 'pos' : 'neg';
     var discCls  = document.getElementById('cr-disc').className.indexOf(' ok') >= 0 ? 'ok' : 'ko';
-    var tbody = document.getElementById('cr-tbody').innerHTML;
+
+    // Remove a 6ª coluna ("Saldo Dev. F.") de cada <tr> só pro PDF — economiza
+    // largura horizontal pra não cortar a última coluna ("Rend. Acum.").
+    var tbodyTemp = document.createElement('tbody');
+    tbodyTemp.innerHTML = document.getElementById('cr-tbody').innerHTML;
+    tbodyTemp.querySelectorAll('tr').forEach(function (tr) {
+      var tds = tr.querySelectorAll('td');
+      if (tds[5]) tds[5].remove();   // índice 5 = 6ª coluna
+    });
+    var tbody = tbodyTemp.innerHTML;
 
     var html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">' +
       '<title>Simulação Crédito vs Investimentos - ' + hoje + '</title>' +
       '<style>' +
-      '@page{size:A4 landscape;margin:8mm 10mm}' +
-      'body{font-family:"Helvetica","Arial",sans-serif;color:#111;font-size:10px;margin:0;padding:0}' +
+      // Forçar landscape A4 (297×210 mm). Repetimos a regra de várias formas
+      // pra contornar inconsistências entre navegadores e settings do user
+      // no diálogo de impressão (alguns Chromes ignoram "landscape" se o
+      // setting padrão do dialog for "Retrato"; aí cai no fallback "size:
+      // 297mm 210mm" que define dimensões físicas explícitas).
+      '@page{size:A4 landscape;size:297mm 210mm;margin:8mm 10mm}' +
+      '@media print{@page{size:A4 landscape;size:297mm 210mm;margin:8mm 10mm}html,body{width:297mm}}' +
+      'html,body{margin:0;padding:0}' +
+      'body{font-family:"Helvetica","Arial",sans-serif;color:#111;font-size:10px;padding:0}' +
+      // Instrução visível enquanto o user vê na tela (não é impressa)
+      '.print-tip{background:#FFF8E1;border:1px solid #F59E0B;border-left:6px solid #F59E0B;border-radius:4px;padding:10px 14px;margin:10px 12px 14px;font-size:12px;color:#78350F;line-height:1.45;display:flex;align-items:flex-start;gap:10px}' +
+      '.print-tip strong{color:#92400E;font-weight:700}' +
+      '.print-tip svg{flex-shrink:0;margin-top:2px}' +
+      '@media print{.print-tip{display:none !important}}' +
       'h1{font-size:18px;color:#002060;margin:0 0 4px;font-weight:600}' +
       'h2{font-size:12px;color:#002060;margin:12px 0 6px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #002060;padding-bottom:3px}' +
       '.sub{font-size:10px;color:#666;margin-bottom:10px}' +
@@ -172,12 +202,20 @@
       'tbody td{padding:5px 5px;border-bottom:1px solid #e5e5e7;text-align:right;font-variant-numeric:tabular-nums;word-wrap:break-word}' +
       'tbody td:first-child{text-align:center;font-weight:600}' +
       'tbody tr:nth-child(even){background:#fafafb}' +
-      'col.c-mes{width:3.5%}col.c-num{width:8.04%}' +
+      // Larguras: 1ª col (mês) = 3.5%, restantes 11 cols dividem 96.5% → 8.77% cada
+      'col.c-mes{width:3.5%}col.c-num{width:8.77%}' +
       '.foot{margin-top:14px;font-size:8px;color:#999;text-align:center}' +
       '@media print{button{display:none}}' +
       'button{position:fixed;top:10px;right:10px;padding:8px 16px;background:#002060;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600}' +
       '</style></head><body>' +
       '<button onclick="window.print()">Imprimir / Salvar PDF</button>' +
+      '<div class="print-tip">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16"/></svg>' +
+        '<div>' +
+          '<strong>Dica:</strong> ao abrir o diálogo de impressão, selecione orientação <strong>Paisagem</strong> ' +
+          'e margens <strong>Padrão</strong> (ou Mínimas) para o cronograma caber em uma página.' +
+        '</div>' +
+      '</div>' +
       '<h1>Simulação: Crédito vs Investimentos</h1>' +
       '<div class="sub">Gerado em ' + hoje + '</div>' +
       '<div class="warn-big">' +
@@ -217,15 +255,16 @@
         '<div class="box"><div class="box-lbl">Ganho com o crédito</div><div class="box-val ' + ganhoCls + '">' + getT('cr-r-ganho') + '</div></div>' +
       '</div>' +
       '<div class="disc ' + discCls + '">' + getT('cr-disc') + '</div>' +
-      '<h2>Cronograma mês a mês</h2>' +
+      '<h2>Cronograma mês a mês <span style="font-size:9px;font-weight:500;color:#666;text-transform:none;letter-spacing:0;margin-left:4px">(valores em R$)</span></h2>' +
+      // 12 colunas (sem "Saldo Dev. F."): 1 c-mes + 11 c-num
       '<table><colgroup><col class="c-mes">' +
       '<col class="c-num"><col class="c-num"><col class="c-num"><col class="c-num">' +
       '<col class="c-num"><col class="c-num"><col class="c-num"><col class="c-num">' +
-      '<col class="c-num"><col class="c-num"><col class="c-num"><col class="c-num">' +
+      '<col class="c-num"><col class="c-num"><col class="c-num">' +
       '</colgroup>' +
       '<thead><tr>' +
         '<th>Mês</th><th>Saldo Devedor</th><th>Juros (A)</th><th>Amortização</th><th>Parcela</th>' +
-        '<th>Saldo Dev. F.</th><th>Valor Inicial</th><th>Rendimento (B)</th><th>Pagamento</th>' +
+        '<th>Valor Inicial</th><th>Rendimento (B)</th><th>Pagamento</th>' +
         '<th>Valor Final</th><th>Dif. Mensal (B−A)</th><th>Dif. Acumulada</th><th>Rend. Acum.</th>' +
       '</tr></thead><tbody>' + tbody + '</tbody></table>' +
       '<div class="foot">Simulação gerada pela calculadora Crédito vs Investimentos.</div>' +

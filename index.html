@@ -3,175 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ferramentas Especialistas · Dashboard</title>
+<title>Ferramentas Especialistas · Dashboard de Fundos</title>
 <link rel="stylesheet" href="shared/theme.css">
-<link rel="stylesheet" href="shared/landing.css">
+<link rel="stylesheet" href="shared/private-topbar.css">
+<style>
+  .home-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+    max-width: 980px; margin: 0 auto 80px; padding: 0 22px; }
+  @media (max-width: 833px) { .home-cards { grid-template-columns: 1fr; padding: 0 16px; margin-bottom: 56px; } }
+  .home-card { position: relative; background: #fff; border-radius: 22px; padding: 36px 32px 32px;
+    text-decoration: none; color: inherit; display: flex; flex-direction: column; min-height: 200px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    transition: transform .3s cubic-bezier(0.4,0,0.2,1), box-shadow .3s cubic-bezier(0.4,0,0.2,1); }
+  .home-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .home-card .eyebrow { font-size: 11px; color: var(--private-muted); letter-spacing: 0.04em;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+  .home-card h3 { font-size: 26px; font-weight: 600; letter-spacing: -0.018em; line-height: 1.1; margin: 0 0 8px; }
+  .home-card p { font-size: 14px; color: var(--private-muted); line-height: 1.45; margin: 0 0 22px; flex: 1; }
+  .home-card-foot { display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--private-blue); font-weight: 400; }
+  .home-card-foot .count { color: var(--private-muted); }
+</style>
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "a12338ede7f9426e80e3969dc9188753"}'></script><!-- End Cloudflare Web Analytics --></head>
-<body>
+<body class="private-style">
 
-<header class="topbar">
-  <a href="index.html" class="tb-brand">
-    <div class="tb-logo">i</div>
-    <div class="tb-brand-text">Ferramentas<br>Especialistas</div>
-  </a>
-
-  <button class="tb-hamburger" aria-label="Abrir menu">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  </button>
-
-  <nav class="tb-nav">
-    <a href="index.html" data-page="index.html" class="tb-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-      </svg>
-      Início
+<header class="private-topbar">
+  <div class="atb-main">
+    <nav class="atb-nav">
+      <a href="index.html" data-page="index.html" class="atb-link">Início</a>
+      <div class="atb-nav-item">
+        <button type="button" class="atb-link-mega"
+                data-mega="investimentos"
+                data-pages="fundos.html previdencia.html comparacao.html correlacao.html"
+                aria-haspopup="true" aria-expanded="false">Investimentos</button>
+        <div class="atb-mobile-sub">
+          <a href="fundos.html"      class="atb-mobile-sub-link">Fundos 555</a>
+          <a href="previdencia.html" class="atb-mobile-sub-link">Previdência</a>
+          <a href="comparacao.html"  class="atb-mobile-sub-link">Comparar Fundos</a>
+          <a href="correlacao.html"  class="atb-mobile-sub-link">Correlação</a>
+        </div>
+      </div>
+      <div class="atb-nav-item">
+        <button type="button" class="atb-link-mega"
+                data-mega="calculadoras"
+                data-pages="calculadoras/troca-ativos.html calculadoras/limite-fgc.html calculadoras/rentabilidade.html calculadoras/credito-vs-invest.html troca-ativos.html limite-fgc.html rentabilidade.html credito-vs-invest.html"
+                aria-haspopup="true" aria-expanded="false">Calculadoras</button>
+        <div class="atb-mobile-sub">
+          <a href="calculadoras/troca-ativos.html"      class="atb-mobile-sub-link">Troca de Ativos</a>
+          <a href="calculadoras/limite-fgc.html"        class="atb-mobile-sub-link">Limite FGC</a>
+          <a href="calculadoras/rentabilidade.html"     class="atb-mobile-sub-link">Rentabilidade</a>
+          <a href="calculadoras/credito-vs-invest.html" class="atb-mobile-sub-link">Crédito vs. Investimentos</a>
+        </div>
+      </div>
+      <div class="atb-nav-item">
+        <button type="button" class="atb-link-mega"
+                data-mega="planejamento"
+                data-pages="calculadoras/simular-pgbl.html calculadoras/aposentadoria.html simular-pgbl.html aposentadoria.html"
+                aria-haspopup="true" aria-expanded="false">Planejamento Financeiro</button>
+        <div class="atb-mobile-sub">
+          <a href="calculadoras/simular-pgbl.html"   class="atb-mobile-sub-link">PGBL</a>
+          <a href="calculadoras/aposentadoria.html"  class="atb-mobile-sub-link">Aposentadoria</a>
+        </div>
+      </div>
+      <a href="portfolio.html" data-page="portfolio.html" class="atb-link">Portfolio</a>
+      <!-- Mobile-only: o "Sobre" do desktop é o .atb-cta no canto direito,
+           mas em mobile ele some — então duplicamos como link normal aqui
+           pro drawer hamburger ter acesso. CSS controla a visibilidade. -->
+      <a href="sobre.html" data-page="sobre.html" class="atb-link atb-link-mobile-only">Sobre</a>
+    </nav>
+    <a href="sobre.html" class="atb-cta">Sobre
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-    <a href="fundos.html" data-page="fundos.html" class="tb-link">Fundos 555</a>
-    <a href="previdencia.html" data-page="previdencia.html" class="tb-link">Previdência</a>
-    <a href="comparacao.html" data-page="comparacao.html" class="tb-link">Comparar Fundos</a>
-    <a href="correlacao.html" data-page="correlacao.html" class="tb-link">Correlação</a>
-    <a href="calculadoras/index.html" data-page="calculadoras" class="tb-link">Calculadoras</a>
-    <a href="portfolio.html" data-page="portfolio.html" class="tb-link">Portfolio</a>
-    <span class="tb-divider"></span>
-    <a href="sobre.html" data-page="sobre.html" class="tb-link tb-link-sobre">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="7" r="4"/>
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+    <button class="atb-hamburger" aria-label="Abrir menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
       </svg>
-      Sobre
-    </a>
-  </nav>
+    </button>
+  </div>
+
+  <div class="atb-mega-stage">
+    <div class="atb-mega" data-mega-for="investimentos">
+      <div class="atb-mega-inner single-col">
+        <div class="atb-mega-col">
+          <p class="atb-mega-eyebrow">Explore Investimentos</p>
+          <a href="fundos.html"      class="atb-mega-link">Fundos 555</a>
+          <a href="previdencia.html" class="atb-mega-link">Previdência</a>
+          <a href="comparacao.html"  class="atb-mega-link">Comparar Fundos</a>
+          <a href="correlacao.html"  class="atb-mega-link">Correlação</a>
+        </div>
+      </div>
+    </div>
+    <div class="atb-mega" data-mega-for="calculadoras">
+      <div class="atb-mega-inner single-col">
+        <div class="atb-mega-col">
+          <p class="atb-mega-eyebrow">Calculadoras</p>
+          <a href="calculadoras/troca-ativos.html"      class="atb-mega-link">Troca de Ativos</a>
+          <a href="calculadoras/limite-fgc.html"        class="atb-mega-link">Limite FGC</a>
+          <a href="calculadoras/rentabilidade.html"     class="atb-mega-link">Rentabilidade</a>
+          <a href="calculadoras/credito-vs-invest.html" class="atb-mega-link">Crédito vs. Investimentos</a>
+        </div>
+      </div>
+    </div>
+    <div class="atb-mega" data-mega-for="planejamento">
+      <div class="atb-mega-inner single-col">
+        <div class="atb-mega-col">
+          <p class="atb-mega-eyebrow">Planejamento Financeiro</p>
+          <a href="calculadoras/simular-pgbl.html"  class="atb-mega-link">PGBL</a>
+          <a href="calculadoras/aposentadoria.html" class="atb-mega-link">Aposentadoria</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
 </header>
 
-<section class="hero">
+<section class="private-hero" data-private-hero>
   <p class="eyebrow">Dashboard do especialista</p>
   <h1>Análises e ferramentas em um só lugar.</h1>
   <p class="hero-sub">Acompanhe a performance dos fundos, simule cenários e tome decisões com base em dados sempre atualizados.</p>
-</section>
-
-<section class="cards-section">
-  <div class="cards-grid">
-
-    <a href="fundos.html" class="nav-card">
-      <div class="nav-card-icon area-fundos">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/>
-        </svg>
-      </div>
-      <h3>Fundos 555</h3>
-      <p>Retornos, destaques e comparativos da plataforma sob ICVM 175.</p>
-      <div class="nav-card-footer">
-        <span class="nav-card-count">613 fundos</span>
-        <svg class="nav-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </div>
+  <div class="hero-cta-row">
+    <a href="fundos.html" class="private-cta">Explorar fundos</a>
+    <a href="previdencia.html" class="private-cta-ghost">Ver previdência
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-
-    <a href="previdencia.html" class="nav-card">
-      <div class="nav-card-icon area-prev">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-        </svg>
-      </div>
-      <h3>Previdência</h3>
-      <p>Catálogo de PGBL e VGBL com performance histórica.</p>
-      <div class="nav-card-footer">
-        <span class="nav-card-count">189 fundos</span>
-        <svg class="nav-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </div>
-    </a>
-
-    <a href="comparacao.html" class="nav-card">
-      <div class="nav-card-icon area-comp">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 3v18h18"/>
-          <path d="M7 15l4-4 3 3 4-6"/>
-          <path d="M7 18l4-1 3 2 4-3"/>
-        </svg>
-      </div>
-      <h3>Comparar Fundos</h3>
-      <p>Selecione fundos e compare retornos por janela com gráfico de evolução das cotas.</p>
-      <div class="nav-card-footer">
-        <span class="nav-card-count">865 ativos</span>
-        <svg class="nav-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </div>
-    </a>
-
-    <a href="correlacao.html" class="nav-card">
-      <div class="nav-card-icon area-corr">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>
-          <path d="M12 3a13 13 0 0 1 0 18"/><path d="M12 3a13 13 0 0 0 0 18"/>
-        </svg>
-      </div>
-      <h3>Correlação</h3>
-      <p>Matriz de correlação entre retornos mensais dos fundos.</p>
-      <div class="nav-card-footer">
-        <span class="nav-card-count">744 ativos</span>
-        <svg class="nav-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </div>
-    </a>
-
-    <a href="calculadoras/index.html" class="nav-card">
-      <div class="nav-card-icon area-calc">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="3" width="16" height="18" rx="2"/>
-          <line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="10" y2="11"/>
-          <line x1="13" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="10" y2="15"/>
-          <line x1="13" y1="15" x2="16" y2="15"/>
-        </svg>
-      </div>
-      <h3>Calculadoras</h3>
-      <p>Simule trocas de ativos, FGC, rentabilidade e crédito vs investimentos.</p>
-      <div class="nav-card-footer">
-        <span class="nav-card-count">4 ferramentas</span>
-        <svg class="nav-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </div>
-    </a>
-
-    <a href="portfolio.html" class="nav-card">
-      <div class="nav-card-icon area-portfolio">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-          <rect x="8" y="2" width="8" height="4" rx="1"/>
-          <path d="M9 14l2 2 4-4"/>
-        </svg>
-      </div>
-      <h3>Portfolio Tracker</h3>
-      <p>Acompanhamento completo de carteira: alocação, evolução e independência financeira.</p>
-      <div class="nav-card-footer">
-        <span class="nav-card-count">8 seções · showcase</span>
-        <svg class="nav-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </div>
-    </a>
-
   </div>
 </section>
-
-<footer class="landing-footer">
-  <p class="landing-footer-text">
-    João Bragança | 2026 |
-    &nbsp;·&nbsp;
-    <strong>Atualizado em 10/05/2026</strong>
-  </p>
+<section class="home-cards">
+  <a href="fundos.html" class="home-card"><span class="eyebrow">Fundos 555</span><h3>Performance e ranking.</h3><p>Retornos, prazo e benchmark dos fundos da plataforma sob ICVM 175.</p><div class="home-card-foot"><span>Abrir</span><span class="count">613 fundos</span></div></a>
+  <a href="previdencia.html" class="home-card"><span class="eyebrow">Previdência</span><h3>PGBL e VGBL.</h3><p>Catálogo de previdência com performance histórica e taxa.</p><div class="home-card-foot"><span>Abrir</span><span class="count">189 fundos</span></div></a>
+  <a href="comparacao.html" class="home-card"><span class="eyebrow">Comparar Fundos</span><h3>Compare lado a lado.</h3><p>Selecione fundos e compare retornos por janela, com gráfico de cotas.</p><div class="home-card-foot"><span>Abrir</span><span class="count">802 ativos</span></div></a>
+  <a href="correlacao.html" class="home-card"><span class="eyebrow">Correlação</span><h3>Matriz de correlação.</h3><p>Como os retornos mensais dos fundos se relacionam — base para diversificação.</p><div class="home-card-foot"><span>Abrir</span><span class="count">613 ativos</span></div></a>
+  <a href="calculadoras/simular-pgbl.html" class="home-card"><span class="eyebrow">Planejamento</span><h3>Simular PGBL.</h3><p>Calcule o aporte ideal e compare a tributação simplificada com a completa, com e sem PGBL.</p><div class="home-card-foot"><span>Abrir</span><span class="count">IRPF 2026</span></div></a>
+  <a href="portfolio.html" class="home-card"><span class="eyebrow">Portfolio</span><h3>Tracker pessoal.</h3><p>Acompanhe a evolução do seu portfólio com posição e rentabilidade.</p><div class="home-card-foot"><span>Abrir</span><span class="count">Beta</span></div></a>
+</section>
+<footer class="private-footer">
+  © 2026 Ferramentas Especialistas · João Bragança · Atualizado em 07/05/2026
 </footer>
-
-<script src="shared/landing.js"></script>
+<script src="shared/private-topbar.js"></script>
 </body>
 </html>

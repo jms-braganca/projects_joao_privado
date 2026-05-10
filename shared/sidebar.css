@@ -67,6 +67,15 @@
   padding: 0 10px 8px;
 }
 
+/* Variant com linha divisória acima — usado quando a seção começa logo
+   depois de um <nav> de outra seção (ex.: "Plan. Financeiro" depois de
+   "Investimentos"). Não aparece no primeiro section-label da sidebar. */
+.sb-section-label--divider {
+  border-top: 1px solid var(--divider);
+  margin-top: 8px;
+  padding-top: 12px;
+}
+
 .sb-nav {
   display: flex;
   flex-direction: column;
@@ -101,6 +110,8 @@
 .sb-link.active.area-portfolio { background: var(--info-bg);  color: var(--info);  }
 .sb-link.active.area-sobre     { background: var(--surface3); color: var(--text);  }
 .sb-link.active.area-comp { background: #E0F7F9; color: #0891b2; }
+.sb-link.active.area-pgbl      { background: #FFF8E1;        color: #92400E;       }
+.sb-link.active.area-apos      { background: var(--pos-bg);  color: var(--pos);    }
 
 /* Footer da sidebar */
 .sb-footer {

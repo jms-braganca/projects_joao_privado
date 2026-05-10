@@ -71,6 +71,7 @@
     modoRet: 'off',                    // 'off' | 'cdi' | 'ibov'
     minPctCdi: 100,                    // valor do slider quando modo='cdi'
     minPpIbov: 0,                      // valor do slider quando modo='ibov'
+    janelaMeses: 12,                   // 12 | 24 — janela de retorno usada no filtro
   };
 
   // ── HELPERS ─────────────────────────────────────────────────────────────
@@ -122,32 +123,58 @@
     return nomeEl ? (nomeEl.textContent || '').trim() : '';
   }
 
-  // Lê % CDI da janela 12M.
-  // Para tabela desktop: a última coluna ".sep" da linha de fundo, antes do
-  // fechamento da tr, contém o pct (texto tipo "98.2%" dentro de span).
-  // Estratégia mais robusta: pegar TODOS os tds da linha e olhar o ÚLTIMO
-  // (para 12M é a última tripla [retorno|cdi|pct] então o pct é o último td).
-  // Para mobile card: o último .rc-sub do .rc-grid (4º item) tem "98% CDI"
-  // ou "+1.5pp" dependendo do benchmark.
-  function extrairPctCdi12m(row) {
+  // ── HELPERS DE INDEXAÇÃO POR PERÍODO ───────────────────────────────────
+  // Ordem de períodos no thead/cards (mesma do Dashboard_Unificado.py):
+  //   [0] Mes_Corrente, [1] Mes_Anterior, [2] YTD, [3] 12_Meses, [4] 24_Meses
+  // Cada período tem 3 colunas no desktop (Retorno, Bm, Bm%) e 1 .rc no mobile.
+  //
+  // PERIODOS_DO_FIM mapeia janela em meses → distância do FINAL da lista de
+  // períodos. Como Mês Corrente/Anterior/YTD não são "janelas em meses" puras,
+  // o filtro só faz sentido pra 12 e 24.
+  var PERIODOS_DO_FIM = { 12: 1, 24: 0 };       // 24 = último; 12 = penúltimo
+  var IDX_RC = { 12: 3, 24: 4 };                // posição do .rc no mobile-card
+
+  // Retorna { ret, cdi, pct } com referências aos <td> da linha desktop
+  // pra janela `meses`. Retorna null se a linha não tem tds suficientes.
+  function tdsDoPeriodo(row, meses) {
+    var tds = row.querySelectorAll('td');
+    var len = tds.length;
+    if (len < 3) return null;
+    var idxFim = PERIODOS_DO_FIM[meses];
+    if (idxFim === undefined) return null;
+    return {
+      ret: tds[len - 3 * idxFim - 3],
+      cdi: tds[len - 3 * idxFim - 2],
+      pct: tds[len - 3 * idxFim - 1],
+    };
+  }
+
+  // Retorna o .rc do mobile-card correspondente à janela.
+  function rcDoPeriodo(row, meses) {
+    var rcs = row.querySelectorAll('.rc-grid > .rc');
+    var idx = IDX_RC[meses];
+    if (idx === undefined || rcs.length <= idx) return null;
+    return rcs[idx];
+  }
+
+  // Lê % CDI da janela escolhida (12m ou 24m).
+  // Desktop: pega a célula PCT do trio do período. Para fundos RV (que
+  // mostram pp acima de IBOV no lugar), retornamos null e o filtro %CDI
+  // simplesmente ignora.
+  // Mobile: o .rc da janela tem .rc-sub com "98% CDI" ou "+1.5pp".
+  function extrairPctCdi(row, meses) {
     if (row.tagName === 'TR') {
-      // Desktop. A última td da linha sempre é o pct do 12M (mesmo
-      // posicionamento se for usa_ibov ou não — usa_ibov daria pp).
-      var tds = row.querySelectorAll('td');
-      if (tds.length === 0) return null;
-      var lastTd = tds[tds.length - 1];
-      var span = lastTd.querySelector('span');
-      var txt = (span ? span.textContent : lastTd.textContent || '').trim();
-      // Aceita "98.2%" (CDI). Se for pp (caso usa_ibov), retornamos null
-      // e o filtro % CDI ignora esses fundos.
+      var t = tdsDoPeriodo(row, meses);
+      if (!t) return null;
+      var span = t.pct.querySelector('span');
+      var txt = (span ? span.textContent : t.pct.textContent || '').trim();
       if (txt.indexOf('pp') !== -1 || txt === '—' || txt === '-') return null;
       var n = parseFloat(txt.replace(',', '.').replace(/[^\d.\-]/g, ''));
       return isNaN(n) ? null : n;
     } else {
-      // Mobile card. O 4º (.rc) é 12M, dentro tem .rc-sub com "98% CDI" etc.
-      var rcs = row.querySelectorAll('.rc-grid > .rc');
-      if (rcs.length < 4) return null;
-      var sub = rcs[3].querySelector('.rc-sub');
+      var rc = rcDoPeriodo(row, meses);
+      if (!rc) return null;
+      var sub = rc.querySelector('.rc-sub');
       if (!sub) return null;
       var txt2 = (sub.textContent || '').trim();
       if (!/CDI/.test(txt2) || txt2 === '—') return null;
@@ -156,42 +183,41 @@
     }
   }
 
-  // Tem 12M de histórico? (= existe valor numérico de retorno em 12M).
-  // Pra tabela: a antepenúltima td (a coluna do retorno 12M) com val-pos/neg/na.
-  // Pra card: o 4º .rc tem .rc-val que se for "—" não tem 12M.
-  function tem12mHist(row) {
+  // Tem histórico na janela escolhida? (= existe valor numérico de retorno).
+  // Desktop: a célula RET do trio com val-pos/neg/na.
+  // Mobile: o .rc da janela tem .rc-val que se for "—" não tem.
+  function temHistorico(row, meses) {
     if (row.tagName === 'TR') {
-      var tds = row.querySelectorAll('td');
-      if (tds.length < 3) return false;
-      // O retorno 12M está em tds[len-3]; pct em tds[len-1].
-      var span = tds[tds.length - 3].querySelector('span');
+      var t = tdsDoPeriodo(row, meses);
+      if (!t) return false;
+      var span = t.ret.querySelector('span');
       if (!span) return false;
       return !span.classList.contains('val-na');
     } else {
-      var rcs = row.querySelectorAll('.rc-grid > .rc');
-      if (rcs.length < 4) return false;
-      var val = rcs[3].querySelector('.rc-val');
+      var rc = rcDoPeriodo(row, meses);
+      if (!rc) return false;
+      var val = rc.querySelector('.rc-val');
       if (!val) return false;
-      var t = (val.textContent || '').trim();
-      return t !== '—' && t !== '-';
+      var t2 = (val.textContent || '').trim();
+      return t2 !== '—' && t2 !== '-';
     }
   }
 
-  // Encontra o "vs Ibov" 12m da última coluna.
-  // Quando a classe usa IBOV (RV), a última td contém "+1.5pp" / "-2.0pp".
-  function extrairPpIbov12m(row) {
+  // Encontra o "vs Ibov" da janela escolhida (em pp).
+  // Para fundos RV (usa_ibov=True), a célula PCT do trio contém "+1.5pp".
+  // Para fundos não-RV retornamos null (filtro pp acima de IBOV ignora).
+  function extrairPpIbov(row, meses) {
     if (row.tagName === 'TR') {
-      var tds = row.querySelectorAll('td');
-      if (tds.length === 0) return null;
-      var lastTd = tds[tds.length - 1];
-      var txt = (lastTd.textContent || '').trim();
+      var t = tdsDoPeriodo(row, meses);
+      if (!t) return null;
+      var txt = (t.pct.textContent || '').trim();
       if (txt.indexOf('pp') === -1) return null;
       var n = parseFloat(txt.replace(',', '.').replace(/[^\d.\-]/g, ''));
       return isNaN(n) ? null : n;
     } else {
-      var rcs = row.querySelectorAll('.rc-grid > .rc');
-      if (rcs.length < 4) return null;
-      var sub = rcs[3].querySelector('.rc-sub');
+      var rc = rcDoPeriodo(row, meses);
+      if (!rc) return null;
+      var sub = rc.querySelector('.rc-sub');
       if (!sub) return null;
       var txt2 = (sub.textContent || '').trim();
       if (txt2.indexOf('pp') === -1) return null;
@@ -332,7 +358,11 @@
           '<div class="cmp-prazo-pills" id="cmp-prazo-pills"></div>' +
         '</div>' +
         '<div class="cmp-screen-block">' +
-          '<div class="cmp-screen-label">Retorno mínimo (12 meses)</div>' +
+          '<div class="cmp-screen-label" id="cmp-ret-label">Retorno mínimo (12 meses)</div>' +
+          '<div class="cmp-janela-toggle" role="group" aria-label="Janela de retorno">' +
+            '<label class="cmp-janela-pill"><input type="radio" name="cmp-janela-ret" value="12" checked><span>12 meses</span></label>' +
+            '<label class="cmp-janela-pill"><input type="radio" name="cmp-janela-ret" value="24"><span>24 meses</span></label>' +
+          '</div>' +
           '<div class="cmp-radio-row">' +
             '<label class="cmp-radio"><input type="radio" name="cmp-modo-ret" value="off" checked> Sem filtro</label>' +
             '<label class="cmp-radio"><input type="radio" name="cmp-modo-ret" value="cdi"> % do CDI</label>' +
@@ -434,6 +464,17 @@
       aplicarScreening();
     });
 
+    // Toggle de janela (12m / 24m). Atualiza label do bloco e re-aplica
+    // o screening pra recomputar a vista usando a coluna correta.
+    scr.querySelectorAll('input[name="cmp-janela-ret"]').forEach(function (rd) {
+      rd.addEventListener('change', function () {
+        screening.janelaMeses = parseInt(rd.value, 10);
+        var lbl = scr.querySelector('#cmp-ret-label');
+        if (lbl) lbl.textContent = 'Retorno mínimo (' + screening.janelaMeses + ' meses)';
+        aplicarScreening();
+      });
+    });
+
     scr.querySelector('#cmp-screen-reset').addEventListener('click', resetarScreening);
   }
 
@@ -485,10 +526,14 @@
     screening.modoRet = 'off';
     screening.minPctCdi = 100;
     screening.minPpIbov = 0;
+    screening.janelaMeses = 12;
 
     $('#cmp-only-aberto').checked = false;
     $$('input[data-prazo]').forEach(function (cb) { cb.checked = false; });
     $$('input[name="cmp-modo-ret"]').forEach(function (rd) { rd.checked = (rd.value === 'off'); });
+    $$('input[name="cmp-janela-ret"]').forEach(function (rd) { rd.checked = (rd.value === '12'); });
+    var lblRet = $('#cmp-ret-label');
+    if (lblRet) lblRet.textContent = 'Retorno mínimo (12 meses)';
     $('#cmp-slider-cdi').hidden = true;
     $('#cmp-slider-ibov').hidden = true;
     $('#cmp-range-cdi').value = 100;
@@ -647,15 +692,16 @@
       }
       if (!match) return false;
     }
-    // 3) Retorno mínimo
+    // 3) Retorno mínimo (na janela escolhida: 12 ou 24 meses)
+    var janela = screening.janelaMeses;
     if (screening.modoRet === 'cdi') {
-      if (!tem12mHist(row)) return false;
-      var pct = extrairPctCdi12m(row);
+      if (!temHistorico(row, janela)) return false;
+      var pct = extrairPctCdi(row, janela);
       if (pct === null) return false;
       if (pct < screening.minPctCdi) return false;
     } else if (screening.modoRet === 'ibov') {
-      if (!tem12mHist(row)) return false;
-      var pp = extrairPpIbov12m(row);
+      if (!temHistorico(row, janela)) return false;
+      var pp = extrairPpIbov(row, janela);
       if (pp === null) return false;
       if (pp < screening.minPpIbov) return false;
     }
