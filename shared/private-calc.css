@@ -951,3 +951,161 @@ body.private-style .page-hero p {
 }
 .ac-verdict .ganho-val.pos { color: #009E5C; }
 .ac-verdict .ganho-val.neg { color: #D7373F; }
+
+/* ===========================================================
+   Apple Care+ vs Apple Care One — calculadora "apple-care"
+   =========================================================== */
+
+/* Lista compacta de devices: nome | preços | qty stepper */
+body.private-style .ac-applecare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 18px;
+  margin-top: 8px;
+}
+@media (max-width: 720px) {
+  body.private-style .ac-applecare-grid { grid-template-columns: 1fr; }
+}
+
+body.private-style .ac-applecare-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 6px 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #FBFBFD;
+  border: 0.5px solid var(--private-divider);
+  transition: background .15s ease, border-color .15s ease;
+}
+body.private-style .ac-applecare-row:hover {
+  background: #fff;
+  border-color: rgba(0,113,227,0.20);
+}
+body.private-style .ac-applecare-row .name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--private-text);
+  letter-spacing: -0.005em;
+  line-height: 1.28;
+}
+body.private-style .ac-applecare-row .price {
+  grid-column: 1 / -1;
+  font-size: 11.5px;
+  color: var(--private-muted);
+  font-variant-numeric: tabular-nums;
+  margin-top: 1px;
+}
+body.private-style .ac-applecare-row .price .sep {
+  margin: 0 6px;
+  opacity: 0.5;
+}
+
+/* Stepper compacto [−][input][+] */
+body.private-style .ac-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 999px;
+  border: 0.5px solid var(--private-border);
+  overflow: hidden;
+  height: 30px;
+}
+body.private-style .ac-stepper button {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--private-blue);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: background .12s ease;
+}
+body.private-style .ac-stepper button:hover { background: rgba(0,113,227,0.08); }
+body.private-style .ac-stepper button:active { background: rgba(0,113,227,0.18); }
+body.private-style .ac-stepper input {
+  width: 38px;
+  height: 30px;
+  border: 0;
+  border-left: 0.5px solid var(--private-divider);
+  border-right: 0.5px solid var(--private-divider);
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: center;
+  padding: 0;
+  color: var(--private-text);
+  font-variant-numeric: tabular-nums;
+  border-radius: 0;
+  outline: none;
+}
+body.private-style .ac-stepper input::-webkit-outer-spin-button,
+body.private-style .ac-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Veredito colorido (.ac-aporte com classe ac-vd-*) */
+body.private-style .ac-aporte.ac-vd-pos {
+  background: linear-gradient(135deg, rgba(0,158,92,0.06) 0%, rgba(0,158,92,0.02) 100%);
+  border-color: rgba(0,158,92,0.30);
+}
+body.private-style .ac-aporte.ac-vd-pos .val { color: #009E5C; }
+
+body.private-style .ac-aporte.ac-vd-neg {
+  background: linear-gradient(135deg, rgba(215,55,63,0.06) 0%, rgba(215,55,63,0.02) 100%);
+  border-color: rgba(215,55,63,0.30);
+}
+body.private-style .ac-aporte.ac-vd-neg .val { color: #D7373F; }
+
+body.private-style .ac-aporte.ac-vd-eq .val { color: var(--private-muted); }
+
+/* Linha de comparação dos 2 planos (tabela ou grid de 2 cols) */
+body.private-style .ac-applecare-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 4px;
+}
+@media (max-width: 720px) {
+  body.private-style .ac-applecare-compare { grid-template-columns: 1fr; }
+}
+body.private-style .ac-applecare-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 0.5px solid var(--private-border);
+  padding: 18px 20px;
+}
+body.private-style .ac-applecare-card.is-one {
+  background: linear-gradient(180deg, rgba(0,113,227,0.04) 0%, #fff 100%);
+}
+body.private-style .ac-applecare-card .ttl {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--private-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+body.private-style .ac-applecare-card .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 0;
+}
+body.private-style .ac-applecare-card .row + .row { border-top: 0.5px solid var(--private-divider); }
+body.private-style .ac-applecare-card .row .lbl {
+  font-size: 13px;
+  color: var(--private-muted);
+  font-weight: 500;
+}
+body.private-style .ac-applecare-card .row .val {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--private-text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
