@@ -389,6 +389,32 @@
   }
 
   /* -------- matriz de correlação ---------------- */
+  /* Calcula a data inicial da janela baseada SOMENTE no fim comum
+     (mínimo dos últimos dias) e no tamanho da janela — sem clipe pelo
+     commonStart de outras séries. Importante: usar commonStart aqui
+     contamina toda a matriz quando algum fundo selecionado é novo
+     (ex.: A1 D30 com 6 meses força todo o resto a usar só 6 meses). */
+  function windowStartFromEnd(commonEnd, w) {
+    if (w === 'all') return '0000-00-00';
+    var end = new Date(commonEnd);
+    var start;
+    if (w === 'ytd')      start = new Date(end.getFullYear(),     0,               1);
+    else if (w === '24m') start = new Date(end.getFullYear() - 2, end.getMonth(),  end.getDate());
+    else /* 12m */        start = new Date(end.getFullYear() - 1, end.getMonth(),  end.getDate());
+    return start.toISOString().slice(0, 10);
+  }
+
+  /* Mínimo de meses de overlap por par para a correlação ser considerada
+     "confiável". Espelha a regra do Python (_matriz_correlacao em
+     geradores/private/_cotas.py): max(3, int(janela * 0.6)).
+     Abaixo desse limiar a célula vira "weak" (opacidade reduzida + tooltip). */
+  function minPtsForWindow(w) {
+    if (w === '24m') return 14;   // 24 * 0.6 = 14.4
+    if (w === 'ytd') return 3;    // YTD pode ser bem curto, manter floor=3
+    if (w === 'all') return 12;
+    return 7;                     // 12m default: 12 * 0.6 = 7.2
+  }
+
   /* Calcula retornos MENSAIS a partir da última cota de cada mês,
      dentro da janela atual (>= startDate). Retorna {YYYY-MM: ret}. */
   function computeMonthlyReturns(src, startDate) {
@@ -453,31 +479,35 @@
 
     if (n < 2) { wrap.style.display = 'none'; return; }
 
-    // 1) startDate igual ao do gráfico (commonStart entre os selecionados)
-    var commonStart = '0000-00-00';
-    var commonEnd   = '9999-99-99';
+    // 1) startDate: SOMENTE do fim comum (não clipe pelo commonStart de
+    //    nenhum fundo individual — assim um fundo novo na seleção não
+    //    encolhe a janela do resto). Cada fundo pega o que tem dentro
+    //    dessa janela; pares com pouca overlap viram "weak" abaixo.
+    var commonEnd = '9999-99-99';
     selecionados.forEach(function (s) {
       var src = DADOS.fundos[s.cnpj];
       if (!src) return;
-      if (src.datas[0] > commonStart) commonStart = src.datas[0];
       var last = src.datas[src.datas.length - 1];
       if (last < commonEnd) commonEnd = last;
     });
-    var startDate = computeWindowStart(commonStart, commonEnd, window_);
+    var startDate = windowStartFromEnd(commonEnd, window_);
+    var minPts = minPtsForWindow(window_);
 
-    // 2) retornos mensais por fundo
+    // 2) retornos mensais por fundo (cada um na janela inteira; se o
+    //    fundo só nasceu no meio, vai ter só os meses dele)
     var monthly = selecionados.map(function (s) {
       return computeMonthlyReturns(DADOS.fundos[s.cnpj], startDate);
     });
 
-    // 3) matriz NxN
+    // 3) matriz NxN + matriz de contagem de overlap por par (nObs)
     var matrix = [];
+    var nObs = [];
     for (var i = 0; i < n; i++) {
-      matrix[i] = [];
+      matrix[i] = []; nObs[i] = [];
       for (var j = 0; j < n; j++) {
-        if (i === j) { matrix[i][j] = 1; continue; }
-        if (i > j)   { matrix[i][j] = matrix[j][i]; continue; }
-        // intersecção de meses
+        if (i === j) { matrix[i][j] = 1; nObs[i][j] = null; continue; }
+        if (i > j)   { matrix[i][j] = matrix[j][i]; nObs[i][j] = nObs[j][i]; continue; }
+        // pairwise complete: interseção de meses do par (i, j)
         var x = [], y = [];
         var keys = Object.keys(monthly[i]);
         keys.forEach(function (m) {
@@ -485,6 +515,7 @@
             x.push(monthly[i][m]); y.push(monthly[j][m]);
           }
         });
+        nObs[i][j]   = x.length;
         matrix[i][j] = pearson(x, y);
       }
     }
@@ -517,20 +548,28 @@
       grid.appendChild(rowLab);
       for (var j2 = 0; j2 < n; j2++) {
         var cell = document.createElement('div');
-        var r = matrix[i2][j2];
+        var r    = matrix[i2][j2];
+        var nOv  = nObs[i2][j2];
         if (i2 === j2) {
           cell.className = 'cmp-corr-cell diag';
           cell.textContent = '1,00';
         } else if (r == null) {
           cell.className = 'cmp-corr-cell empty';
           cell.textContent = '—';
-          cell.title = 'Histórico em comum insuficiente';
+          cell.title = 'Histórico em comum insuficiente'
+                     + (nOv != null ? ' (n=' + nOv + ')' : '');
         } else {
-          cell.className = 'cmp-corr-cell';
+          // overlap < minPts → valor "fraco": exibe normalmente mas com
+          // opacidade reduzida e tooltip avisando que a amostra é pequena.
+          var weak = (nOv != null && nOv < minPts);
+          cell.className = 'cmp-corr-cell' + (weak ? ' is-weak' : '');
           cell.style.background = corrColor(r);
           cell.style.color = corrTextColor(r);
+          if (weak) cell.style.opacity = '0.55';
           cell.textContent = fmtCorr(r);
-          cell.title = sRow.nome + ' × ' + selecionados[j2].nome + ': ' + fmtCorr(r);
+          cell.title = sRow.nome + ' × ' + selecionados[j2].nome + ': '
+                     + fmtCorr(r)
+                     + '  (n=' + nOv + (weak ? ', amostra pequena' : '') + ')';
         }
         grid.appendChild(cell);
       }

@@ -211,6 +211,11 @@
     }
 
     var corr = janela === '24m' ? DC.corr24m : DC.corr12m;
+    // contagem de meses comuns por par — usada para marcar amostras pequenas.
+    // Compat: payloads antigos podem não trazer nobs*; fallback dummy.
+    var nobs = janela === '24m' ? (DC.nobs24m || null) : (DC.nobs12m || null);
+    // Limiar de "amostra confortável" (mesma regra do Python: max(3, int(jan*0.6))).
+    var minPts = (janela === '24m') ? 14 : 7;
 
     // Layout SVG dinâmico
     var labelLeft = 240;
@@ -252,13 +257,21 @@
         var x = labelLeft + j * cellSize;
         var y = labelTop  + i * cellSize;
         var r = (idR === idC) ? 1 : (corr[idR] && corr[idR][idC] != null ? corr[idR][idC] : null);
+        // overlap em meses (null se payload antigo sem nobs)
+        var nOv = null;
+        if (idR === idC) nOv = null;
+        else if (nobs && nobs[idR] && nobs[idR][idC] != null) nOv = nobs[idR][idC];
+        var weak = (r != null && idR !== idC && nOv != null && nOv < minPts);
         var fill = corrColor(r);
         var rDisp = (r == null) ? '—' : ((r >= 0 ? '+' : '') + r.toFixed(2).replace('.', ','));
         parts.push(
-          '<rect class="cell" x="' + x + '" y="' + y +
+          '<rect class="cell' + (weak ? ' is-weak' : '') + '" x="' + x + '" y="' + y +
           '" width="' + (cellSize - 1) + '" height="' + (cellSize - 1) +
           '" rx="2" fill="' + fill +
-          '" data-i="' + idR + '" data-j="' + idC + '" data-v="' + rDisp + '" />');
+          (weak ? '" fill-opacity="0.55' : '') +
+          '" data-i="' + idR + '" data-j="' + idC + '" data-v="' + rDisp +
+          '" data-n="' + (nOv == null ? '' : nOv) +
+          '" data-weak="' + (weak ? '1' : '0') + '" />');
       });
     });
 
@@ -294,7 +307,9 @@
     var i = +t.dataset.i, j = +t.dataset.j;
     var a = DC.items[i].nome;
     var b = DC.items[j].nome;
-    showTooltip(e.clientX, e.clientY, a, b, t.dataset.v);
+    var nStr  = t.dataset.n;
+    var weak  = t.dataset.weak === '1';
+    showTooltip(e.clientX, e.clientY, a, b, t.dataset.v, nStr, weak);
   }
   function onMouseMove(e) {
     if (tooltipEl && tooltipEl.classList.contains('is-visible')) {
@@ -307,10 +322,16 @@
     if (to && to.tagName === 'rect') return;
     if (tooltipEl) tooltipEl.classList.remove('is-visible');
   }
-  function showTooltip(x, y, a, b, v) {
+  function showTooltip(x, y, a, b, v, nStr, weak) {
     if (!tooltipEl) return;
+    var nLine = '';
+    if (nStr) {
+      // reaproveita o estilo da .tt-pair (texto pequeno, cinza claro)
+      nLine = '<div class="tt-pair" style="margin-top:4px;margin-bottom:0">n = '
+            + escHtml(nStr) + (weak ? ' · amostra pequena' : '') + '</div>';
+    }
     tooltipEl.innerHTML = '<div class="tt-pair">' + escHtml(a) + ' × ' + escHtml(b) +
-                          '</div><div class="tt-value">' + escHtml(v) + '</div>';
+                          '</div><div class="tt-value">' + escHtml(v) + '</div>' + nLine;
     tooltipEl.style.left = x + 'px';
     tooltipEl.style.top  = y + 'px';
     tooltipEl.classList.add('is-visible');
