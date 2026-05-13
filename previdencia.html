@@ -7,6 +7,46 @@
 <link rel="stylesheet" href="shared/theme.css">
 <link rel="stylesheet" href="shared/private-topbar.css">
 <link rel="stylesheet" href="shared/private-fundos.css">
+<style>
+.class-rail{
+  position:fixed; left:18px; top:50%; transform:translateY(-50%);
+  z-index:90;
+  background:rgba(255,255,255,0.65);
+  -webkit-backdrop-filter:saturate(180%) blur(22px);
+          backdrop-filter:saturate(180%) blur(22px);
+  border:.5px solid rgba(0,0,0,0.06);
+  border-radius:18px;
+  padding:8px;
+  box-shadow:0 12px 36px -8px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.04);
+  display:flex; flex-direction:column; gap:2px;
+  max-height:calc(100vh - 48px); overflow-y:auto;
+  transition:width .25s cubic-bezier(.2,.8,.2,1);
+  scrollbar-width:none;
+}
+.class-rail::-webkit-scrollbar{ display:none }
+.class-rail a{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px; border-radius:10px;
+  font-size:12.5px; font-weight:500; color:#6e6e73;
+  white-space:nowrap; overflow:hidden;
+  transition:background .18s ease, color .18s ease;
+  text-decoration:none;
+}
+.class-rail a svg{
+  width:16px; height:16px; flex-shrink:0;
+  stroke:currentColor; stroke-width:1.7; fill:none;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+.class-rail a span{
+  max-width:0; opacity:0; overflow:hidden;
+  transition:max-width .25s ease, opacity .15s ease;
+}
+.class-rail:hover a span{ max-width:200px; opacity:1; padding-left:2px }
+.class-rail a:hover{ background:rgba(0,0,0,0.04); color:#1d1d1f }
+.class-rail a.active{ background:#1d1d1f; color:#fff }
+.class-rail a.active svg{ stroke:#fff }
+@media (max-width:1280px){ .class-rail{ display:none } }
+</style>
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "a12338ede7f9426e80e3969dc9188753"}'></script><!-- End Cloudflare Web Analytics --></head>
 <body class="private-style">
 
@@ -113,6 +153,7 @@
   </div>
 </header>
 
+<aside class="class-rail" id="classRail"><a href="#classe-credito-privado" data-target="classe-credito-privado" title="Crédito Privado"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span>Crédito Privado</span></a><a href="#classe-renda-fixa-ativa" data-target="classe-renda-fixa-ativa" title="Renda Fixa Ativa"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg><span>RF Ativa</span></a><a href="#classe-renda-fixa" data-target="classe-renda-fixa" title="Renda Fixa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-7.5-1-9 1-4 0-5 4.7-5 6.5C2 16.3 4 18 5 18l1 2h3l1-2h4l1 2h3l1-2c1.7-.5 4-2 4-5 0-1.5-1-3-2-4 0-3-1.5-4-2-4Z"/><path d="M2 9h.01"/><path d="M14 9h.01"/></svg><span>Renda Fixa</span></a><a href="#classe-multimercado" data-target="classe-multimercado" title="Multimercado"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg><span>Multimercado</span></a><a href="#classe-renda-variavel" data-target="classe-renda-variavel" title="Renda Variável"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg><span>Renda Variável</span></a><a href="#classe-renda-variavel-v70" data-target="classe-renda-variavel-v70" title="Renda Variável V70"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg><span>RV V70</span></a><a href="#classe-balanceados" data-target="classe-balanceados" title="Balanceados"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg><span>Balanceados</span></a><a href="#classe-criptoativos" data-target="classe-criptoativos" title="Criptoativos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"/></svg><span>Cripto</span></a><a href="#classe-fases-da-vida" data-target="classe-fases-da-vida" title="Fases da Vida"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg><span>Fases da Vida</span></a><a href="#classe-alocacao" data-target="classe-alocacao" title="Alocação"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg><span>Alocação</span></a></aside>
 <section class="page-hero" data-private-hero>
   <p class="eyebrow">Previdência · PGBL e VGBL</p>
   <h1>Previdência sem segredo. <span class="muted">Compare e escolha.</span></h1>
@@ -3703,5 +3744,36 @@
 
 <script src="shared/private-topbar.js"></script>
 <script src="shared/private-fundos.js"></script>
+<script>
+(function(){
+  var rail = document.getElementById('classRail');
+  if (!rail) return;
+  var links = Array.prototype.slice.call(rail.querySelectorAll('a[data-target]'));
+  var sections = links.map(function(a){
+    return document.getElementById(a.getAttribute('data-target'));
+  }).filter(Boolean);
+  // smooth-scroll com offset pra não esconder o título da classe atrás de
+  // topbar/hero (80px é margem confortável; ajustar se a topbar mudar).
+  links.forEach(function(a){
+    a.addEventListener('click', function(e){
+      var tgt = document.getElementById(a.getAttribute('data-target'));
+      if (!tgt) return;
+      e.preventDefault();
+      var y = tgt.getBoundingClientRect().top + window.pageYOffset - 80;
+      window.scrollTo({top:y, behavior:'smooth'});
+    });
+  });
+  function update(){
+    var y = window.pageYOffset + 120;
+    var idx = 0;
+    sections.forEach(function(s, i){ if (s.offsetTop <= y) idx = i; });
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if (links[idx]) links[idx].classList.add('active');
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>
 </body>
 </html>
