@@ -24,7 +24,7 @@
   var aba          = 'fundo';            // 'fundo' | 'prev'
   var selecionados = new Set();          // ids (cnpjs) selecionados
   var query        = '';
-  var janela       = '12m';
+  var janela       = 'all';   // default 'all' (bate com referência MaisRetorno)
   var benchCdi     = false;
   var benchIbov    = false;
   var tooltipEl;
@@ -201,7 +201,7 @@
       summary.innerHTML =
         '<span><strong>' + nFund + '</strong> fundo' + (nFund !== 1 ? 's' : '') + ' selecionado' + (nFund !== 1 ? 's' : '') + '</span>' +
         (nBench ? '<span>+ <strong>' + nBench + '</strong> benchmark' + (nBench>1?'s':'') + '</span>' : '') +
-        '<span>janela <strong>' + (janela === '24m' ? '24 meses' : '12 meses') + '</strong></span>';
+        '<span>janela <strong>' + (janela === 'all' ? 'tudo' : (janela === '24m' ? '24 meses' : '12 meses')) + '</strong></span>';
     }
 
     if (n < 2) {
@@ -210,13 +210,23 @@
       return;
     }
 
-    var corr = janela === '24m' ? DC.corr24m : DC.corr12m;
-    // contagem de DIAS ÚTEIS comuns por par — usada para marcar amostras
-    // pequenas. Compat: payloads antigos podem não trazer nobs*; fallback dummy.
-    var nobs = janela === '24m' ? (DC.nobs24m || null) : (DC.nobs12m || null);
-    // Limiar de "amostra confortável" em dias úteis (~60% da janela;
-    // 1 mês ≈ 21 du). 12m: 150 | 24m: 300.
-    var minPts = (janela === '24m') ? 300 : 150;
+    // Janela → matriz + n_obs + limiar de "amostra confortável" em dias úteis
+    // (~60% da janela; 1 mês ≈ 21 du). Compat: payloads antigos sem corrAll
+    // caem em fallback pra 12m.
+    var corr, nobs, minPts;
+    if (janela === 'all') {
+      corr   = DC.corrAll || DC.corr24m || DC.corr12m;
+      nobs   = DC.nobsAll || DC.nobs24m || DC.nobs12m || null;
+      minPts = 600;     // ≈ 48m × 21 × 0.6 (alto: matrizes longas devem ter MUITO histórico em comum)
+    } else if (janela === '24m') {
+      corr   = DC.corr24m;
+      nobs   = DC.nobs24m || null;
+      minPts = 300;     // ≈ 24m × 21 × 0.6
+    } else {
+      corr   = DC.corr12m;
+      nobs   = DC.nobs12m || null;
+      minPts = 150;     // ≈ 12m × 21 × 0.6
+    }
 
     // Layout SVG dinâmico
     var labelLeft = 240;
@@ -258,7 +268,7 @@
         var x = labelLeft + j * cellSize;
         var y = labelTop  + i * cellSize;
         var r = (idR === idC) ? 1 : (corr[idR] && corr[idR][idC] != null ? corr[idR][idC] : null);
-        // overlap em meses (null se payload antigo sem nobs)
+        // overlap em dias úteis (null se payload antigo sem nobs)
         var nOv = null;
         if (idR === idC) nOv = null;
         else if (nobs && nobs[idR] && nobs[idR][idC] != null) nOv = nobs[idR][idC];

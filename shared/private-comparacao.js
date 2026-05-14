@@ -24,7 +24,7 @@
   var query     = '';
   var benchCdi  = true;
   var benchIbov = false;   // só CDI ligado por default
-  var window_   = '12m';   // ytd | 12m | 24m | all
+  var window_   = 'all';   // ytd | 12m | 24m | all — default histórico inteiro (bate com MaisRetorno)
   var chart;
 
   function ready(fn) {
