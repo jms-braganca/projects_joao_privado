@@ -211,11 +211,12 @@
     }
 
     var corr = janela === '24m' ? DC.corr24m : DC.corr12m;
-    // contagem de meses comuns por par — usada para marcar amostras pequenas.
-    // Compat: payloads antigos podem não trazer nobs*; fallback dummy.
+    // contagem de DIAS ÚTEIS comuns por par — usada para marcar amostras
+    // pequenas. Compat: payloads antigos podem não trazer nobs*; fallback dummy.
     var nobs = janela === '24m' ? (DC.nobs24m || null) : (DC.nobs12m || null);
-    // Limiar de "amostra confortável" (mesma regra do Python: max(3, int(jan*0.6))).
-    var minPts = (janela === '24m') ? 14 : 7;
+    // Limiar de "amostra confortável" em dias úteis (~60% da janela;
+    // 1 mês ≈ 21 du). 12m: 150 | 24m: 300.
+    var minPts = (janela === '24m') ? 300 : 150;
 
     // Layout SVG dinâmico
     var labelLeft = 240;
