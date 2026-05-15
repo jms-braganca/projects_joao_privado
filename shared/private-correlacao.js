@@ -178,13 +178,13 @@
     });
   }
 
-  /* -------- heatmap SVG ------------------------- */
+  /* -------- heatmap (DOM grid no estilo da matriz do Comparador) -- */
   function renderHeatmap() {
     var wrap = document.getElementById('corHeatmap');
     var summary = document.getElementById('corSummary');
     if (!wrap) return;
 
-    // monta a lista de itens visíveis: selecionados + benchmarks ativos
+    // Lista de itens visíveis: selecionados + benchmarks ativos
     var visible = [];
     selecionados.forEach(function (id) {
       var i = idx[id];
@@ -192,16 +192,16 @@
     });
     if (benchCdi  && idx['cdi']  != null) visible.push(idx['cdi']);
     if (benchIbov && idx['ibov'] != null) visible.push(idx['ibov']);
-
     var n = visible.length;
 
     if (summary) {
       var nFund  = visible.filter(function (i) { return DC.items[i].tipo !== 'benchmark'; }).length;
       var nBench = n - nFund;
+      var janelaLbl = (janela === 'all' ? 'Tudo' : (janela === '24m' ? '24 meses' : '12 meses'));
       summary.innerHTML =
         '<span><strong>' + nFund + '</strong> fundo' + (nFund !== 1 ? 's' : '') + ' selecionado' + (nFund !== 1 ? 's' : '') + '</span>' +
         (nBench ? '<span>+ <strong>' + nBench + '</strong> benchmark' + (nBench>1?'s':'') + '</span>' : '') +
-        '<span>janela <strong>' + (janela === 'all' ? 'tudo' : (janela === '24m' ? '24 meses' : '12 meses')) + '</strong></span>';
+        '<span>janela <strong>' + janelaLbl + '</strong></span>';
     }
 
     if (n < 2) {
@@ -210,100 +210,105 @@
       return;
     }
 
-    // Janela → matriz + n_obs + limiar de "amostra confortável" em dias úteis
+    // Janela → matriz + n_obs + limiar de "amostra confortável" em DIAS ÚTEIS
     // (~60% da janela; 1 mês ≈ 21 du). Compat: payloads antigos sem corrAll
-    // caem em fallback pra 12m.
+    // caem em fallback pra 24m / 12m.
     var corr, nobs, minPts;
     if (janela === 'all') {
       corr   = DC.corrAll || DC.corr24m || DC.corr12m;
       nobs   = DC.nobsAll || DC.nobs24m || DC.nobs12m || null;
-      minPts = 600;     // ≈ 48m × 21 × 0.6 (alto: matrizes longas devem ter MUITO histórico em comum)
+      minPts = 600;
     } else if (janela === '24m') {
       corr   = DC.corr24m;
       nobs   = DC.nobs24m || null;
-      minPts = 300;     // ≈ 24m × 21 × 0.6
+      minPts = 300;
     } else {
       corr   = DC.corr12m;
       nobs   = DC.nobs12m || null;
-      minPts = 150;     // ≈ 12m × 21 × 0.6
+      minPts = 150;
     }
 
-    // Layout SVG dinâmico
-    var labelLeft = 240;
-    var labelTop  = 220;
-    var cellSize  = pickCellSize(n);
-    var w = labelLeft + n * cellSize + 8;
-    var h = labelTop  + n * cellSize + 8;
+    // Tamanhos adaptativos do grid (largura do label, largura mín das células,
+    // altura). Espelha o visual .cmp-corr-grid (pílulas) da página Comparar.
+    var labelColW = n <= 6 ? 200 : (n <= 12 ? 180 : 160);
+    var minCellW  = n <= 6 ?  70 : (n <= 12 ?  56 : (n <= 20 ? 44 : 36));
+    var cellH     = n <= 8 ?  44 : (n <= 14 ?  38 : (n <= 22 ? 32 : 26));
+    var truncCols = n <= 8 ? 20 : (n <= 14 ? 14 : 10);
 
-    var parts = [];
-    parts.push('<svg class="cor-svg" viewBox="0 0 ' + w + ' ' + h +
-               '" xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">');
+    var html = '<div class="cor-matrix-grid" style="' +
+      'display:grid;' +
+      'grid-template-columns:' + labelColW + 'px repeat(' + n + ', minmax(' + minCellW + 'px, 1fr));' +
+      'gap:4px;font-variant-numeric:tabular-nums;font-size:12px;align-items:stretch;">';
 
-    // header (col labels rotacionados)
-    visible.forEach(function (idC, j) {
+    // Header row: corner vazio + col labels (texto horizontal — não rotaciono mais)
+    html += '<div></div>';
+    visible.forEach(function (idC) {
       var it = DC.items[idC];
-      var cx = labelLeft + j * cellSize + cellSize / 2;
-      var cy = labelTop - 6;
-      var clsLabel = it.tipo === 'benchmark' ? 'col-label is-bench' : 'col-label';
-      var text = truncate(it.nome, 28);
-      parts.push(
-        '<text class="' + clsLabel + '" x="' + cx + '" y="' + cy +
-        '" transform="rotate(-60 ' + cx + ',' + cy + ')">' +
-        escHtml(text) + '</text>');
+      var isBench = it.tipo === 'benchmark';
+      html += '<div class="cor-col-label' + (isBench ? ' is-bench' : '') + '" title="' + escHtml(it.nome) + '" style="' +
+        'font-size:11px;color:' + (isBench ? '#6e6e73' : '#86868b') + ';' +
+        'font-weight:' + (isBench ? '600' : '500') + ';' +
+        'display:flex;align-items:flex-end;justify-content:center;text-align:center;' +
+        'padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;">' +
+        escHtml(truncate(it.nome, truncCols)) + '</div>';
     });
 
-    // row labels
-    visible.forEach(function (idR, i) {
-      var it = DC.items[idR];
-      var clsLabel = it.tipo === 'benchmark' ? 'row-label is-bench' : 'row-label';
-      var text = truncate(it.nome, 32);
-      parts.push(
-        '<text class="' + clsLabel + '" x="' + (labelLeft - 8) + '" y="' +
-        (labelTop + i * cellSize + cellSize / 2 + 3) + '">' + escHtml(text) + '</text>');
-    });
+    // Data rows
+    visible.forEach(function (idR) {
+      var rowIt = DC.items[idR];
+      var isBenchR = rowIt.tipo === 'benchmark';
+      html += '<div class="cor-row-label' + (isBenchR ? ' is-bench' : '') + '" title="' + escHtml(rowIt.nome) + '" style="' +
+        'font-size:12px;color:#1d1d1f;font-weight:' + (isBenchR ? '600' : '500') + ';' +
+        'display:flex;align-items:center;padding-right:10px;' +
+        'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
+        escHtml(truncate(rowIt.nome, 32)) + '</div>';
 
-    // cells
-    visible.forEach(function (idR, i) {
-      visible.forEach(function (idC, j) {
-        var x = labelLeft + j * cellSize;
-        var y = labelTop  + i * cellSize;
-        var r = (idR === idC) ? 1 : (corr[idR] && corr[idR][idC] != null ? corr[idR][idC] : null);
-        // overlap em dias úteis (null se payload antigo sem nobs)
-        var nOv = null;
-        if (idR === idC) nOv = null;
-        else if (nobs && nobs[idR] && nobs[idR][idC] != null) nOv = nobs[idR][idC];
-        var weak = (r != null && idR !== idC && nOv != null && nOv < minPts);
-        var fill = corrColor(r);
-        var rDisp = (r == null) ? '—' : ((r >= 0 ? '+' : '') + r.toFixed(2).replace('.', ','));
-        parts.push(
-          '<rect class="cell' + (weak ? ' is-weak' : '') + '" x="' + x + '" y="' + y +
-          '" width="' + (cellSize - 1) + '" height="' + (cellSize - 1) +
-          '" rx="2" fill="' + fill +
-          (weak ? '" fill-opacity="0.55' : '') +
-          '" data-i="' + idR + '" data-j="' + idC + '" data-v="' + rDisp +
-          '" data-n="' + (nOv == null ? '' : nOv) +
-          '" data-weak="' + (weak ? '1' : '0') + '" />');
+      visible.forEach(function (idC) {
+        if (idR === idC) {
+          html += '<div class="cor-cell diag" style="' +
+            'display:flex;align-items:center;justify-content:center;border-radius:10px;' +
+            'min-height:' + cellH + 'px;font-weight:500;background:#F5F5F7;color:#86868b;">1,00</div>';
+          return;
+        }
+        var r = (corr[idR] && corr[idR][idC] != null) ? corr[idR][idC] : null;
+        var nOv = (nobs && nobs[idR] && nobs[idR][idC] != null) ? nobs[idR][idC] : null;
+        if (r == null) {
+          html += '<div class="cor-cell empty" title="Histórico em comum insuficiente' +
+            (nOv != null ? ' (n=' + nOv + ')' : '') + '" style="' +
+            'display:flex;align-items:center;justify-content:center;border-radius:10px;' +
+            'min-height:' + cellH + 'px;font-size:11px;background:#FAFAFA;color:#a1a1a6;">—</div>';
+          return;
+        }
+        var weak = (nOv != null && nOv < minPts);
+        var bg = corrColor(r);
+        var fg = (Math.abs(r) > 0.55) ? '#fff' : '#1d1d1f';
+        var disp = (r >= 0 ? '+' : '') + r.toFixed(2).replace('.', ',');
+        var styleParts = [
+          'display:flex','align-items:center','justify-content:center',
+          'border-radius:10px','min-height:' + cellH + 'px','font-weight:500',
+          'letter-spacing:-0.005em','cursor:default','transition:transform .15s',
+          'background:' + bg, 'color:' + fg,
+        ];
+        if (weak) styleParts.push('opacity:0.55');
+        html += '<div class="cor-cell' + (weak ? ' is-weak' : '') + '"' +
+                ' data-i="' + idR + '" data-j="' + idC +
+                '" data-v="' + disp +
+                '" data-n="' + (nOv == null ? '' : nOv) +
+                '" data-weak="' + (weak ? '1' : '0') +
+                '" style="' + styleParts.join(';') + ';">' + disp + '</div>';
       });
     });
 
-    parts.push('</svg>');
-    wrap.innerHTML = parts.join('');
+    html += '</div>';
+    wrap.innerHTML = html;
 
-    var svg = wrap.querySelector('svg');
-    if (svg) {
-      svg.addEventListener('mouseover', onCellHover);
-      svg.addEventListener('mousemove', onMouseMove);
-      svg.addEventListener('mouseout',  onMouseOut);
-    }
-  }
-
-  function pickCellSize(n) {
-    if (n <= 8)   return 48;
-    if (n <= 14)  return 36;
-    if (n <= 22)  return 28;
-    if (n <= 35)  return 22;
-    if (n <= 60)  return 16;
-    return 12;
+    // Hover handlers — DOM events em .cor-cell com data-i (exclui diag/empty)
+    var cells = wrap.querySelectorAll('.cor-cell[data-i]');
+    cells.forEach(function (c) {
+      c.addEventListener('mouseenter', onCellHover);
+      c.addEventListener('mousemove',  onMouseMove);
+      c.addEventListener('mouseleave', onMouseOut);
+    });
   }
 
   /* -------- tooltip ----------------------------- */
@@ -313,11 +318,12 @@
     document.body.appendChild(tooltipEl);
   }
   function onCellHover(e) {
-    var t = e.target;
-    if (!t || t.tagName !== 'rect' || !t.classList.contains('cell')) return;
+    // currentTarget = a div .cor-cell que recebeu o listener.
+    var t = e.currentTarget;
+    if (!t || !t.dataset || t.dataset.i == null) return;
     var i = +t.dataset.i, j = +t.dataset.j;
-    var a = DC.items[i].nome;
-    var b = DC.items[j].nome;
+    var a = (DC.items[i] || {}).nome || '';
+    var b = (DC.items[j] || {}).nome || '';
     var nStr  = t.dataset.n;
     var weak  = t.dataset.weak === '1';
     showTooltip(e.clientX, e.clientY, a, b, t.dataset.v, nStr, weak);
@@ -328,9 +334,7 @@
       tooltipEl.style.top  = e.clientY + 'px';
     }
   }
-  function onMouseOut(e) {
-    var to = e.relatedTarget;
-    if (to && to.tagName === 'rect') return;
+  function onMouseOut() {
     if (tooltipEl) tooltipEl.classList.remove('is-visible');
   }
   function showTooltip(x, y, a, b, v, nStr, weak) {
